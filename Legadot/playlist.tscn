@@ -1,0 +1,18 @@
+[gd_scene load_steps=4 format=3 uid="uid://bgi2nj4a78noe"]
+
+[ext_resource type="Script" path="res://Legadot/playlist.gd" id="1_j71pu"]
+[ext_resource type="AudioStream" uid="uid://bpik81fpmuljo" path="res://tutorial_test.wav" id="2_dtcoy"]
+[ext_resource type="AudioStream" uid="uid://pbblikmlxhpm" path="res://tnog_main.wav" id="3_lus5d"]
+
+[node name="Playlist" type="Node2D" node_paths=PackedStringArray("tutorial_stream", "game_stream")]
+script = ExtResource("1_j71pu")
+tutorial_stream = NodePath("TutorialStream")
+game_stream = NodePath("GameStream")
+
+[node name="TutorialStream" type="AudioStreamPlayer" parent="."]
+stream = ExtResource("2_dtcoy")
+volume_db = -12.0
+
+[node name="GameStream" type="AudioStreamPlayer" parent="."]
+stream = ExtResource("3_lus5d")
+volume_db = -12.0
