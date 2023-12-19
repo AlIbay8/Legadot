@@ -3,6 +3,14 @@ extends Node2D
 @export var tutorial_stream: AudioStreamPlayer
 @export var game_stream: AudioStreamPlayer
 
+var test_timeline: Dictionary = {
+	"1.25": {
+		"stream": "first"
+	},
+	"3.87": {
+		"stream": "second"
+	}
+}
 # Called when the node enters the scene tree for the first time.
 func _ready():
 #	tutorial_stream.play(12.8)
