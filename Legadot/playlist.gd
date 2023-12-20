@@ -11,25 +11,49 @@ var groups: Dictionary = {}
 var timeline: Dictionary = {}
 var v_states: Dictionary = {}
 var h_sections: Dictionary = {}
+var bpms: Dictionary = {}
+var bpm_times: Array
 
 var is_playing: bool = false
 var song_position: float = 0.0
 
 var playlist_vol: float = 1.0
 
-@export var v_state: String
-@export var h_state: String
+@export var auto_start: bool = false
 
-# Called when the node enters the scene tree for the first time.
+@export var v_state: String:
+	set(state):
+		if state in v_states:
+			set_v_state(state)
+		
+@export var h_state: String:
+	set(state):
+		if state in h_sections:
+			h_state = state
+
+var tracker_timer: Timer
+
 func _ready():
-	build_data()
-	build_groups()
-	build_timeline()
-	assign_timers()
-	build_v_states()
-	build_h_sections()
-	if OS.get_name()!="Web":
-		play(0)
+	if playlist_data:
+		build_data()
+		build_groups()
+		build_timeline()
+		assign_timers()
+		build_v_states()
+		build_h_sections()
+		build_bpm()
+		
+		if playlist_data.default_v_state!="":
+			set_v_state(playlist_data.default_v_state)
+		
+		if playlist_data.default_h_state!="":
+			set_h_state(playlist_data.default_h_state, auto_start)
+			print(h_state)
+		else:
+			if auto_start and OS.get_name()!="Web":
+				play(0)
+		
+		get_bpm(7.5)
 
 func build_data():
 	for stream in playlist_data.streams:
@@ -76,8 +100,6 @@ func build_timeline():
 		if not (t.time in timeline):
 			timeline[t.time] = LdTimelineEvent.new()
 		timeline[t.time].transition = t
-	
-	print(timeline)
 
 func assign_timers():
 	for e in timeline:
@@ -96,6 +118,15 @@ func build_h_sections():
 	for h in playlist_data.sections:
 		h_sections[h.section_name] = h.time
 
+func build_bpm():
+	for bpm in playlist_data.bpm_times:
+		bpms[bpm.time] = bpm.bpm
+		if !bpm_times.has(bpm.time):
+			bpm_times.append(bpm.time)
+	bpm_times.sort()
+	bpm_times.reverse()
+	print(bpm_times)
+	
 # Basic song functions
 func play(from: float = 0.0):
 	if is_playing:
@@ -107,14 +138,19 @@ func play(from: float = 0.0):
 		if time>from:
 			#print(timeline[time].timer)
 			timeline[time].timer.wait_time = time-from+AudioServer.get_time_to_next_mix()
-			print(timeline[time].timer.wait_time)
 			if timeline[time].timer.wait_time>=0.05:
+				if not tracker_timer or timeline[time].timer.wait_time>tracker_timer.wait_time:
+					tracker_timer = timeline[time].timer
 				timeline[time].timer.start()
 			else:
 				timeline[time].trigger_event(self, abs(from-time))
 			continue
 		if (from-time)>=0.0:
 			timeline[time].trigger_event(self, abs(from-time))
+
+func play_from_sect(section: String):
+	if section in h_sections:
+		play(h_sections[section])
 
 func stop():
 	song_position = 0
@@ -167,7 +203,7 @@ func interpolate_vol(vol_linear: float, stream: Dictionary, type: int):
 	stream.player.volume_db = linear_to_db(new_vol)
 
 # Vertical Remixing
-func change_v_state(new_state: String, fade_override: float = -1.0):
+func set_v_state(new_state: String, fade_override: float = -1.0):
 	if new_state in v_states:
 		if not v_states[new_state].add_only:
 			for group in groups:
@@ -187,12 +223,40 @@ func check_h_transition(transition: LdTransition) -> bool:
 		return true
 	return false
 
+func set_h_state(new_state: String, auto_play: bool = false):
+	h_state = new_state
+	if auto_play:
+		play_from_sect(h_state)
+
+func get_bpm(time: float):
+	for i in range(bpm_times.size()):
+		if time>=bpm_times[i]:
+			var c_t: float = bpm_times[i]
+			var n_t: float = bpm_times[i-1 if (i-1)>=0 else i]
+			var c_b: float = bpms[c_t]
+			var n_b: float = bpms[n_t]
+			
+			var dt: float = n_t-c_t if (n_t!=c_t) else 1.0
+			var db_dt: float = (n_b-c_b)/dt
+			var x_t: float = time-c_t
+			
+			var bpm: float = db_dt*x_t + c_b
+			print(c_t, ": ", bpm)
+			return bpm
+
 # Called every frame. 'delta' is the elapsed time since the previous frame.
-func _process(_delta):
+func _process(delta):
 	if Input.is_action_just_pressed("debug1"):
-		change_v_state("main")
+		v_state = "main"
 	if Input.is_action_just_pressed("debug2"):
-		change_v_state("crates")
+		v_state = "crates"
+	
+	if is_playing:
+		if tracker_timer and !tracker_timer.is_stopped():
+			song_position = tracker_timer.wait_time - tracker_timer.time_left
+		else:
+			song_position+=delta
+		get_bpm(song_position)
 
 func _on_button_pressed():
 	play(12.799)

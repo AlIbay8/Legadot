@@ -12,3 +12,7 @@ class_name LdPlaylistData
 @export_category("Horizontal Remixing")
 @export var sections: Array[LdSection]
 @export var transitions: Array[LdTransition]
+
+@export_category("Defaults")
+@export var default_v_state: String
+@export var default_h_state: String

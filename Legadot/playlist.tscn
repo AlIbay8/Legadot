@@ -1,14 +1,14 @@
-[gd_scene load_steps=3 format=3 uid="uid://bgi2nj4a78noe"]
+[gd_scene load_steps=3 format=3 uid="uid://dxq2ex6wdqc1m"]
 
 [ext_resource type="Script" path="res://Legadot/playlist.gd" id="1_j71pu"]
-[ext_resource type="Resource" uid="uid://cwxl75pemnjov" path="res://test_playlist.tres" id="2_ihhio"]
+[ext_resource type="Resource" uid="uid://c8xpg0kt2yfwr" path="res://bpm_playlist.tres" id="2_32gq6"]
 
 [node name="Playlist" type="Node2D" node_paths=PackedStringArray("stream_players", "timers")]
 script = ExtResource("1_j71pu")
-playlist_data = ExtResource("2_ihhio")
+playlist_data = ExtResource("2_32gq6")
 stream_players = NodePath("StreamPlayers")
 timers = NodePath("Timers")
-h_state = "game"
+auto_start = true
 
 [node name="StreamPlayers" type="Node2D" parent="."]
 
