@@ -169,8 +169,9 @@ func interpolate_vol(vol_linear: float, stream: Dictionary, type: int):
 # Vertical Remixing
 func change_v_state(new_state: String, fade_override: float = -1.0):
 	if new_state in v_states:
-		for group in groups:
-			fade_group(0.0, group, fade_override)
+		if not v_states[new_state].add_only:
+			for group in groups:
+				fade_group(0.0, group, fade_override)
 		for group in v_states[new_state].groups:
 			fade_group(1.0, group, fade_override)
 
