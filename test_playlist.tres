@@ -1,0 +1,123 @@
+[gd_resource type="Resource" script_class="LdPlaylistData" load_steps=27 format=3 uid="uid://cwxl75pemnjov"]
+
+[ext_resource type="Script" path="res://Legadot/data_containers/LdBpmData.gd" id="1_sevuw"]
+[ext_resource type="Script" path="res://Legadot/data_containers/LdPlaylistData.gd" id="2_k43d3"]
+[ext_resource type="Script" path="res://Legadot/data_containers/LdSectionData.gd" id="3_kmg5l"]
+[ext_resource type="AudioStream" uid="uid://bpik81fpmuljo" path="res://tutorial_test.wav" id="4_uh8pg"]
+[ext_resource type="Script" path="res://Legadot/data_containers/LdStreamData.gd" id="5_n3r1w"]
+[ext_resource type="AudioStream" uid="uid://pbblikmlxhpm" path="res://tnog_main.wav" id="6_rxyr5"]
+[ext_resource type="AudioStream" uid="uid://coayraujd6jmc" path="res://crates.wav" id="7_qynnp"]
+[ext_resource type="Script" path="res://Legadot/data_containers/LdTransitionData.gd" id="8_rhamt"]
+[ext_resource type="Script" path="res://Legadot/data_containers/LdVerticalStateData.gd" id="8_v1c8p"]
+
+[sub_resource type="Resource" id="Resource_j2qft"]
+script = ExtResource("1_sevuw")
+bpm = 150.0
+time = 0.0
+
+[sub_resource type="Resource" id="Resource_mw4e4"]
+script = ExtResource("3_kmg5l")
+section_name = "tutorial"
+time = 0.0
+
+[sub_resource type="Resource" id="Resource_timwd"]
+script = ExtResource("3_kmg5l")
+section_name = "game_intro"
+time = 12.8
+
+[sub_resource type="Resource" id="Resource_rma6q"]
+script = ExtResource("3_kmg5l")
+section_name = "game"
+time = 25.6
+
+[sub_resource type="Resource" id="Resource_enr5t"]
+script = ExtResource("3_kmg5l")
+section_name = "outro"
+time = 78.4
+
+[sub_resource type="Resource" id="Resource_u3voh"]
+script = ExtResource("3_kmg5l")
+section_name = "tension"
+time = 83.2
+
+[sub_resource type="Resource" id="Resource_okw0c"]
+script = ExtResource("5_n3r1w")
+name = "tutorial"
+audio_stream = ExtResource("4_uh8pg")
+time = 0.0
+vol = 1.0
+group = "default"
+
+[sub_resource type="Resource" id="Resource_t6cuk"]
+script = ExtResource("5_n3r1w")
+name = "main"
+audio_stream = ExtResource("6_rxyr5")
+time = 12.8
+vol = 1.0
+group = "default"
+
+[sub_resource type="Resource" id="Resource_ij373"]
+script = ExtResource("5_n3r1w")
+name = "crates"
+audio_stream = ExtResource("7_qynnp")
+time = 25.6
+vol = 1.0
+group = "crates"
+
+[sub_resource type="Resource" id="Resource_xi1j8"]
+script = ExtResource("8_rhamt")
+time = 12.8
+destinations = Array[String](["game", "outro", "tutorial"])
+loop = true
+
+[sub_resource type="Resource" id="Resource_p8mhb"]
+script = ExtResource("8_rhamt")
+time = 25.6
+destinations = Array[String](["tutorial", "outro", "game_intro"])
+loop = false
+
+[sub_resource type="Resource" id="Resource_hxbys"]
+script = ExtResource("8_rhamt")
+time = 38.4
+destinations = Array[String](["tutorial", "game_intro", "outro"])
+loop = false
+
+[sub_resource type="Resource" id="Resource_ike1v"]
+script = ExtResource("8_rhamt")
+time = 64.0
+destinations = Array[String](["tutorial", "game_intro", "outro"])
+loop = false
+
+[sub_resource type="Resource" id="Resource_jtytg"]
+script = ExtResource("8_rhamt")
+time = 76.8
+destinations = Array[String](["outro", "tutorial", "game_intro"])
+loop = true
+
+[sub_resource type="Resource" id="Resource_7k1el"]
+script = ExtResource("8_rhamt")
+time = 86.4
+destinations = Array[String](["game", "tension"])
+loop = true
+
+[sub_resource type="Resource" id="Resource_l4pxf"]
+script = ExtResource("8_v1c8p")
+state_name = "main"
+groups = Array[String](["default"])
+add_only = false
+
+[sub_resource type="Resource" id="Resource_xwnne"]
+script = ExtResource("8_v1c8p")
+state_name = "crates"
+groups = Array[String](["default", "crates"])
+add_only = false
+
+[resource]
+script = ExtResource("2_k43d3")
+playlist_name = "test_playlist"
+streams = Array[ExtResource("5_n3r1w")]([SubResource("Resource_okw0c"), SubResource("Resource_t6cuk"), SubResource("Resource_ij373")])
+bpm_times = Array[ExtResource("1_sevuw")]([SubResource("Resource_j2qft")])
+vertical_states = Array[ExtResource("8_v1c8p")]([SubResource("Resource_l4pxf"), SubResource("Resource_xwnne")])
+fade_length = 1.625
+sections = Array[ExtResource("3_kmg5l")]([SubResource("Resource_mw4e4"), SubResource("Resource_timwd"), SubResource("Resource_rma6q"), SubResource("Resource_enr5t"), SubResource("Resource_u3voh")])
+transitions = Array[ExtResource("8_rhamt")]([SubResource("Resource_xi1j8"), SubResource("Resource_p8mhb"), SubResource("Resource_hxbys"), SubResource("Resource_ike1v"), SubResource("Resource_ike1v"), SubResource("Resource_jtytg"), SubResource("Resource_7k1el")])

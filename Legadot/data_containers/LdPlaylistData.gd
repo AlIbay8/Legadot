@@ -1,6 +1,7 @@
 extends Resource
-class_name LdPlaylist
+class_name LdPlaylistData
 
+@export var playlist_name: String
 @export var streams: Array[LdStream]
 @export var bpm_times: Array[LdBpm]
 

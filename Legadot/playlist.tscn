@@ -1,18 +1,32 @@
-[gd_scene load_steps=4 format=3 uid="uid://bgi2nj4a78noe"]
+[gd_scene load_steps=3 format=3 uid="uid://bgi2nj4a78noe"]
 
 [ext_resource type="Script" path="res://Legadot/playlist.gd" id="1_j71pu"]
-[ext_resource type="AudioStream" uid="uid://bpik81fpmuljo" path="res://tutorial_test.wav" id="2_dtcoy"]
-[ext_resource type="AudioStream" uid="uid://pbblikmlxhpm" path="res://tnog_main.wav" id="3_lus5d"]
+[ext_resource type="Resource" uid="uid://cwxl75pemnjov" path="res://test_playlist.tres" id="2_ihhio"]
 
-[node name="Playlist" type="Node2D" node_paths=PackedStringArray("tutorial_stream", "game_stream")]
+[node name="Playlist" type="Node2D" node_paths=PackedStringArray("stream_players", "timers")]
 script = ExtResource("1_j71pu")
-tutorial_stream = NodePath("TutorialStream")
-game_stream = NodePath("GameStream")
+playlist_data = ExtResource("2_ihhio")
+stream_players = NodePath("StreamPlayers")
+timers = NodePath("Timers")
+h_state = "game"
 
-[node name="TutorialStream" type="AudioStreamPlayer" parent="."]
-stream = ExtResource("2_dtcoy")
-volume_db = -12.0
+[node name="StreamPlayers" type="Node2D" parent="."]
 
-[node name="GameStream" type="AudioStreamPlayer" parent="."]
-stream = ExtResource("3_lus5d")
-volume_db = -12.0
+[node name="Timers" type="Node2D" parent="."]
+
+[node name="PlayButton" type="Button" parent="."]
+offset_left = 159.0
+offset_top = 101.0
+offset_right = 262.0
+offset_bottom = 152.0
+text = "Play"
+
+[node name="StopButton" type="Button" parent="."]
+offset_left = 277.0
+offset_top = 101.0
+offset_right = 386.0
+offset_bottom = 158.0
+text = "Stop"
+
+[connection signal="pressed" from="PlayButton" to="." method="_on_button_pressed"]
+[connection signal="pressed" from="StopButton" to="." method="_on_stop_button_pressed"]
