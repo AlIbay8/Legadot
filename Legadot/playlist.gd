@@ -46,6 +46,12 @@ signal quarter_beat(beat_pos: float)
 signal eighth_beat(beat_pos: float)
 signal section(sect: String)
 
+@export_category("Debug")
+@export var debug_label: Label
+@export var vertical_btn: OptionButton
+@export var horizontal_btn: OptionButton
+@export var queueables_list: HBoxContainer
+
 func _ready():
 	if playlist_data:
 		build_data()
@@ -56,12 +62,16 @@ func _ready():
 		build_h_sections()
 		build_bpm()
 		
+		prepare_debug()
+		
 		if playlist_data.default_v_state!="":
-			set_v_state(playlist_data.default_v_state)
+			v_state = playlist_data.default_v_state
+			set_v_state(playlist_data.default_v_state,0.0)
 		else:
 			fade_playlist(1.0,false,0.0)
 		
 		if playlist_data.default_h_state!="":
+			h_state = playlist_data.default_h_state
 			set_h_state(playlist_data.default_h_state, auto_start)
 		else:
 			if auto_start and OS.get_name()!="Web":
@@ -329,7 +339,7 @@ func _physics_process(delta):
 func report_beat():
 	if last_reported_beat!=beat_position:
 		#print(beat_position)
-		$Label.text = current_section + ", " + str(beat_position)
+		debug_label.text = current_section + ", " + str(beat_position)
 		if fmod(beat_position,4)==1.0: # <-- 4 = beats in meaure
 			#print("measure")
 			self.measure.emit(beat_position)
@@ -357,3 +367,42 @@ func _on_button_pressed():
 
 func _on_stop_button_pressed():
 	stop()
+	
+func prepare_debug():
+	init_vertical()
+	init_horizontal()
+	init_queueables()
+	pass
+
+func init_vertical():
+	var i: int = 0
+	for v in v_states:
+		vertical_btn.add_item(v)
+		if v==v_state:
+			vertical_btn.select(i)
+		i+=1
+
+func init_horizontal():
+	var i: int = 0
+	for h in h_sections:
+		horizontal_btn.add_item(h)
+		if h==h_state:
+			horizontal_btn.select(i)
+		i+=1
+
+func init_queueables():
+	for s in stream_data:
+		if stream_data[s].queueable:
+			var btn: Button = Button.new()
+			btn.text = s
+			queueables_list.add_child(btn)
+			btn.pressed.connect(play_queueable.bind(s))
+
+func _on_vertical_option_item_selected(index):
+	set_v_state(vertical_btn.get_item_text(index))
+	pass # Replace with function body.
+
+
+func _on_horizontal_option_item_selected(index):
+	set_h_state(horizontal_btn.get_item_text(index))
+	pass # Replace with function body.

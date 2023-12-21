@@ -1,4 +1,4 @@
-[gd_resource type="Resource" script_class="LdPlaylistData" load_steps=31 format=3 uid="uid://cwxl75pemnjov"]
+[gd_resource type="Resource" script_class="LdPlaylistData" load_steps=34 format=3 uid="uid://cwxl75pemnjov"]
 
 [ext_resource type="Script" path="res://Legadot/data_containers/LdBpmData.gd" id="1_sevuw"]
 [ext_resource type="Script" path="res://Legadot/data_containers/LdPlaylistData.gd" id="2_k43d3"]
@@ -11,6 +11,7 @@
 [ext_resource type="Script" path="res://Legadot/data_containers/LdTransitionData.gd" id="8_rhamt"]
 [ext_resource type="Script" path="res://Legadot/data_containers/LdVerticalStateData.gd" id="8_v1c8p"]
 [ext_resource type="AudioStream" uid="uid://c8u3x4p5lgsfa" path="res://queueables/win_sfx.wav" id="9_vx6ap"]
+[ext_resource type="AudioStream" uid="uid://1wwta20okag6" path="res://spikes.wav" id="10_1xpyc"]
 
 [sub_resource type="Resource" id="Resource_j2qft"]
 script = ExtResource("1_sevuw")
@@ -70,6 +71,16 @@ audio_stream = ExtResource("7_qynnp")
 time = 25.6
 vol = 1.0
 group = "crates"
+queueable = false
+allow_dupes = false
+
+[sub_resource type="Resource" id="Resource_a5ip5"]
+script = ExtResource("5_n3r1w")
+name = "spikes"
+audio_stream = ExtResource("10_1xpyc")
+time = 25.6
+vol = 0.2
+group = "spikes"
 queueable = false
 allow_dupes = false
 
@@ -138,15 +149,21 @@ add_only = false
 [sub_resource type="Resource" id="Resource_xwnne"]
 script = ExtResource("8_v1c8p")
 state_name = "crates"
-groups = Array[String](["default", "crates"])
-add_only = false
+groups = Array[String](["crates"])
+add_only = true
+
+[sub_resource type="Resource" id="Resource_we6fy"]
+script = ExtResource("8_v1c8p")
+state_name = "spikes"
+groups = Array[String](["spikes"])
+add_only = true
 
 [resource]
 script = ExtResource("2_k43d3")
 playlist_name = "test_playlist"
-streams = Array[ExtResource("5_n3r1w")]([SubResource("Resource_okw0c"), SubResource("Resource_t6cuk"), SubResource("Resource_ij373"), SubResource("Resource_cono4"), SubResource("Resource_q3ffi")])
+streams = Array[ExtResource("5_n3r1w")]([SubResource("Resource_okw0c"), SubResource("Resource_t6cuk"), SubResource("Resource_ij373"), SubResource("Resource_a5ip5"), SubResource("Resource_cono4"), SubResource("Resource_q3ffi")])
 bpm_times = Array[ExtResource("1_sevuw")]([SubResource("Resource_j2qft")])
-vertical_states = Array[ExtResource("8_v1c8p")]([SubResource("Resource_l4pxf"), SubResource("Resource_xwnne")])
+vertical_states = Array[ExtResource("8_v1c8p")]([SubResource("Resource_l4pxf"), SubResource("Resource_xwnne"), SubResource("Resource_we6fy")])
 fade_length = 1.625
 sections = Array[ExtResource("3_kmg5l")]([SubResource("Resource_mw4e4"), SubResource("Resource_timwd"), SubResource("Resource_rma6q"), SubResource("Resource_enr5t"), SubResource("Resource_u3voh")])
 transitions = Array[ExtResource("8_rhamt")]([SubResource("Resource_xi1j8"), SubResource("Resource_p8mhb"), SubResource("Resource_hxbys"), SubResource("Resource_ike1v"), SubResource("Resource_ike1v"), SubResource("Resource_jtytg"), SubResource("Resource_7k1el")])
