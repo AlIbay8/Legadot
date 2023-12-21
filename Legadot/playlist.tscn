@@ -28,5 +28,11 @@ offset_right = 386.0
 offset_bottom = 158.0
 text = "Stop"
 
+[node name="Label" type="Label" parent="."]
+offset_left = 245.0
+offset_top = 230.0
+offset_right = 719.0
+offset_bottom = 296.0
+
 [connection signal="pressed" from="PlayButton" to="." method="_on_button_pressed"]
 [connection signal="pressed" from="StopButton" to="." method="_on_stop_button_pressed"]

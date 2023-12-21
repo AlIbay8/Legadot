@@ -13,6 +13,9 @@ class_name LdPlaylistData
 @export var sections: Array[LdSection]
 @export var transitions: Array[LdTransition]
 
+@export_category("Interactive Audio")
+@export var count_subdivision: int = 1
+
 @export_category("Defaults")
 @export var default_v_state: String
 @export var default_h_state: String

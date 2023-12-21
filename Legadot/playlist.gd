@@ -15,7 +15,11 @@ var bpms: Dictionary = {}
 var bpm_times: Array
 
 var is_playing: bool = false
-var song_position: float = 0.0
+var sec_per_beat: float = 0.0
+var start_position: float = 0.0
+var sec_position: float = 0.0
+var beat_position: float = 0
+var last_reported_beat: float = 0
 
 var playlist_vol: float = 1.0
 
@@ -53,7 +57,7 @@ func _ready():
 			if auto_start and OS.get_name()!="Web":
 				play(0)
 		
-		get_bpm(7.5)
+		print(get_beats_since_sect(13.459))
 
 func build_data():
 	for stream in playlist_data.streams:
@@ -120,18 +124,19 @@ func build_h_sections():
 
 func build_bpm():
 	for bpm in playlist_data.bpm_times:
-		bpms[bpm.time] = bpm.bpm
+		bpms[bpm.time] = bpm
 		if !bpm_times.has(bpm.time):
 			bpm_times.append(bpm.time)
 	bpm_times.sort()
 	bpm_times.reverse()
-	print(bpm_times)
+	#print(bpm_times)
 	
 # Basic song functions
 func play(from: float = 0.0):
 	if is_playing:
 		stop()
 	is_playing = true
+	start_position = from
 	var time_keys = timeline.keys()
 	time_keys.sort()
 	for time in time_keys:
@@ -153,7 +158,7 @@ func play_from_sect(section: String):
 		play(h_sections[section])
 
 func stop():
-	song_position = 0
+	sec_position = 0
 	is_playing = false
 	for timer in timers.get_children():
 		timer.stop()
@@ -228,24 +233,43 @@ func set_h_state(new_state: String, auto_play: bool = false):
 	if auto_play:
 		play_from_sect(h_state)
 
-func get_bpm(time: float):
+func get_bpm(time: float) -> float:
 	for i in range(bpm_times.size()):
 		if time>=bpm_times[i]:
 			var c_t: float = bpm_times[i]
 			var n_t: float = bpm_times[i-1 if (i-1)>=0 else i]
-			var c_b: float = bpms[c_t]
-			var n_b: float = bpms[n_t]
+			var c_b: float = bpms[c_t].bpm
+			var n_b: float = bpms[n_t].bpm
 			
 			var dt: float = n_t-c_t if (n_t!=c_t) else 1.0
 			var db_dt: float = (n_b-c_b)/dt
 			var x_t: float = time-c_t
 			
 			var bpm: float = db_dt*x_t + c_b
-			print(c_t, ": ", bpm)
+			#print(c_t, ": ", bpm)
 			return bpm
+	return 0
+
+func get_beats_since_sect(time: float) -> float:
+	for i in range(bpm_times.size()):
+		if time>=bpm_times[i]:
+			var c_t: float = bpm_times[i]
+			var n_t: float = bpm_times[i-1 if (i-1)>=0 else i]
+			var c_b: float = bpms[c_t].bpm
+			var n_b: float = bpms[n_t].bpm if not bpms[c_t].constant else bpms[c_t].bpm
+			
+			var dt: float = n_t-c_t if (n_t!=c_t) else 1.0
+			var db_dt: float = (n_b-c_b)/dt
+			var x_t: float = time-c_t
+			
+			var beats_sec: float = (pow(x_t,2)/2)*db_dt + c_b*x_t
+			var beats: float = (beats_sec/(60.0/playlist_data.count_subdivision)) + playlist_data.count_subdivision
+			#print("beats since ", c_t, "s: ", beats)
+			return beats
+	return 0
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
-func _process(delta):
+func _physics_process(delta):
 	if Input.is_action_just_pressed("debug1"):
 		v_state = "main"
 	if Input.is_action_just_pressed("debug2"):
@@ -253,14 +277,24 @@ func _process(delta):
 	
 	if is_playing:
 		if tracker_timer and !tracker_timer.is_stopped():
-			song_position = tracker_timer.wait_time - tracker_timer.time_left
+			sec_position = start_position+tracker_timer.wait_time - tracker_timer.time_left
 		else:
-			song_position+=delta
-		get_bpm(song_position)
+			sec_position+=delta
+		
+		beat_position = floor(get_beats_since_sect(sec_position))/playlist_data.count_subdivision
+		report_beat()
+
+func report_beat():
+	if last_reported_beat!=beat_position:
+		print(beat_position)
+		$Label.text = str(beat_position)
+		match fmod(beat_position,1):
+			0.0: print("quarter note")
+			0.5: print("eighth note")
+		last_reported_beat = beat_position
 
 func _on_button_pressed():
-	play(12.799)
+	play(0.0)
 
 func _on_stop_button_pressed():
 	stop()
-	pass # Replace with function body.

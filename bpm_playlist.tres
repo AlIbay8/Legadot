@@ -10,31 +10,37 @@
 script = ExtResource("1_fkmr3")
 bpm = 128.0
 time = 0.0
+constant = true
 
 [sub_resource type="Resource" id="Resource_64wwt"]
 script = ExtResource("1_fkmr3")
 bpm = 128.0
 time = 7.5
+constant = false
 
 [sub_resource type="Resource" id="Resource_d61qk"]
 script = ExtResource("1_fkmr3")
 bpm = 92.0
 time = 16.227
+constant = true
 
 [sub_resource type="Resource" id="Resource_kli3x"]
 script = ExtResource("1_fkmr3")
 bpm = 92.0
 time = 21.445
+constant = false
 
 [sub_resource type="Resource" id="Resource_18htw"]
 script = ExtResource("1_fkmr3")
 bpm = 150.0
 time = 25.412
+constant = true
 
 [sub_resource type="Resource" id="Resource_0hkhw"]
 script = ExtResource("1_fkmr3")
 bpm = 150.0
 time = 31.812
+constant = false
 
 [sub_resource type="Resource" id="Resource_af4qy"]
 script = ExtResource("4_tc6fh")
@@ -59,5 +65,6 @@ vertical_states = Array[ExtResource("5_s6ci3")]([SubResource("Resource_2y7rm")])
 fade_length = 0.0
 sections = Array[Resource("res://Legadot/data_containers/LdSectionData.gd")]([])
 transitions = Array[Resource("res://Legadot/data_containers/LdTransitionData.gd")]([])
+count_subdivision = 1
 default_v_state = ""
 default_h_state = ""
