@@ -1,14 +1,14 @@
 [gd_scene load_steps=4 format=3 uid="uid://dxq2ex6wdqc1m"]
 
 [ext_resource type="Script" path="res://Legadot/playlist.gd" id="1_j71pu"]
-[ext_resource type="Resource" uid="uid://cwxl75pemnjov" path="res://test_playlist.tres" id="2_0bvp5"]
+[ext_resource type="Resource" uid="uid://mll8k3nbsshp" path="res://jump_bpm_playlist.tres" id="2_3isli"]
 
 [sub_resource type="LabelSettings" id="LabelSettings_v5mwe"]
 font_size = 36
 
 [node name="Playlist" type="Node2D" node_paths=PackedStringArray("stream_players", "timers")]
 script = ExtResource("1_j71pu")
-playlist_data = ExtResource("2_0bvp5")
+playlist_data = ExtResource("2_3isli")
 stream_players = NodePath("StreamPlayers")
 timers = NodePath("Timers")
 auto_start = true

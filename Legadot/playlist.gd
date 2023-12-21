@@ -63,7 +63,6 @@ func _ready():
 		
 		if playlist_data.default_h_state!="":
 			set_h_state(playlist_data.default_h_state, auto_start)
-			#print(h_state)
 		else:
 			if auto_start and OS.get_name()!="Web":
 				play(0)
@@ -71,7 +70,7 @@ func _ready():
 		print(get_beats_since_sect(13.459))
 		await section_reached("game")
 		print("reached game")
-		set_v_state("crates")
+		#set_v_state("crates")
 
 func build_data():
 	for stream in playlist_data.streams:
@@ -87,7 +86,9 @@ func add_stream(stream: LdStream):
 				"player": player,
 				"max_vol": stream.vol,
 				"stream_vol": stream.vol,
-				"group": stream.group
+				"group": stream.group,
+				"queueable": stream.queueable,
+				"connected": 0.0
 			}
 			
 			stream_players.add_child(player)
@@ -104,6 +105,7 @@ func build_groups():
 
 func build_timeline():
 	for s in stream_data:
+		if stream_data[s].queueable: continue
 		var s_time = stream_data[s].time
 		if not (s_time in timeline):
 			timeline[s_time] = LdTimelineEvent.new()
@@ -148,19 +150,17 @@ func build_bpm():
 			bpm_times.append(bpm.time)
 	bpm_times.sort()
 	bpm_times.reverse()
-	#print(bpm_times)
 	
 # Basic song functions
 func play(from: float = 0.0):
 	if is_playing:
-		stop()
+		stop(true)
 	is_playing = true
 	start_position = from
 	var time_keys = timeline.keys()
 	time_keys.sort()
 	for time in time_keys:
 		if time>from:
-			#print(timeline[time].timer)
 			timeline[time].timer.wait_time = time-from+AudioServer.get_time_to_next_mix()
 			if timeline[time].timer.wait_time>=0.05:
 				if not tracker_timer or timeline[time].timer.wait_time>tracker_timer.wait_time:
@@ -176,14 +176,16 @@ func play_from_sect(sect: String):
 	if sect in h_sections:
 		play(h_sections[sect])
 
-func stop():
+func stop(seek_stop: bool = false):
 	sec_position = 0
 	is_playing = false
 	for timer in timers.get_children():
 		timer.stop()
-	for player in stream_players.get_children():
-		if player.playing:
-			player.playing = false
+	for s in stream_data:
+		var stream = stream_data[s]
+		if stream.queueable and seek_stop: continue
+		if stream.player.playing:
+			stream.player.playing = false
 
 func seek(to: float):
 	play(to)
@@ -198,7 +200,7 @@ func fade_stream(vol_linear, stream: String, fade_override: float = -1.0):
 	pass
 
 func fade_group(vol_linear: float, group: String, fade_override: float = -1.0):
-	if group in groups:
+	if group in groups and group!="":
 		var group_tween = create_tween()
 		group_tween.set_parallel(true)
 	
@@ -265,10 +267,10 @@ func get_bpm(time: float) -> float:
 			var x_t: float = time-c_t
 			
 			var bpm: float = db_dt*x_t + c_b
-			#print(c_t, ": ", bpm)
 			return bpm
 	return 0
 
+# Interactive Audio
 func get_beats_since_sect(time: float) -> float:
 	for i in range(bpm_times.size()):
 		if time>=bpm_times[i]:
@@ -283,16 +285,37 @@ func get_beats_since_sect(time: float) -> float:
 			
 			var beats_sec: float = (pow(x_t,2)/2)*db_dt + c_b*x_t
 			var beats: float = (beats_sec/(60.0/playlist_data.count_subdivision)) + playlist_data.count_subdivision
-			#print("beats since ", c_t, "s: ", beats)
 			return beats
 	return 0
+
+func play_queueable(stream: String, wait_for_beat: float = 1.0):
+	if stream in stream_data:
+		var queueable = stream_data[stream]
+		
+		if queueable.connected == wait_for_beat: return
+		match wait_for_beat:
+			1.0: 
+				queueable.connected = 1.0
+				await self.quarter_beat
+			0.5: 
+				queueable.connected = 0.5
+				await self.eighth_beat
+			4.0:
+				queueable.connected = 4.0
+				await self.measure # <-- 4 = beats in measure
+			_:
+				return
+		print("play ", stream)
+		queueable.player.play(0+AudioServer.get_time_to_next_mix())
+		queueable.connected = 0.0
+	
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _physics_process(delta):
 	if Input.is_action_just_pressed("debug1"):
-		v_state = "main"
+		play_queueable("win", 1.0)
 	if Input.is_action_just_pressed("debug2"):
-		v_state = "crates"
+		play_queueable("collect", 1.0)
 	
 	if is_playing:
 		if tracker_timer and !tracker_timer.is_stopped():
@@ -307,17 +330,16 @@ func report_beat():
 	if last_reported_beat!=beat_position:
 		#print(beat_position)
 		$Label.text = current_section + ", " + str(beat_position)
-		match fmod(beat_position,4): # <-- 4 = beats in meaure
-			1.0: 
-				#print("measure")
-				self.measure.emit(beat_position)
-		match fmod(beat_position,1):
-			0.0: 
-				#print("quarter note")
-				self.quarter_beat.emit(beat_position)
-			0.5:
-				self.eighth_beat.emit(beat_position) 
-				#print("eighth note")
+		if fmod(beat_position,4)==1.0: # <-- 4 = beats in meaure
+			#print("measure")
+			self.measure.emit(beat_position)
+		if fmod(beat_position,1)==0.0:
+			#print("quarter note")
+			self.quarter_beat.emit(beat_position)
+		if fmod(beat_position,0.5)==0.0 and playlist_data.count_subdivision>=2:
+			#print("eighth note")
+			self.eighth_beat.emit(beat_position) 
+			
 		last_reported_beat = beat_position
 
 func section_reached(sect: String) -> bool:

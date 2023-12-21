@@ -1,4 +1,4 @@
-[gd_resource type="Resource" script_class="LdPlaylistData" load_steps=27 format=3 uid="uid://cwxl75pemnjov"]
+[gd_resource type="Resource" script_class="LdPlaylistData" load_steps=31 format=3 uid="uid://cwxl75pemnjov"]
 
 [ext_resource type="Script" path="res://Legadot/data_containers/LdBpmData.gd" id="1_sevuw"]
 [ext_resource type="Script" path="res://Legadot/data_containers/LdPlaylistData.gd" id="2_k43d3"]
@@ -7,8 +7,10 @@
 [ext_resource type="Script" path="res://Legadot/data_containers/LdStreamData.gd" id="5_n3r1w"]
 [ext_resource type="AudioStream" uid="uid://pbblikmlxhpm" path="res://tnog_main.wav" id="6_rxyr5"]
 [ext_resource type="AudioStream" uid="uid://coayraujd6jmc" path="res://crates.wav" id="7_qynnp"]
+[ext_resource type="AudioStream" uid="uid://b4xtivfqjmvw" path="res://queueables/collect_sfx.wav" id="8_0xe2u"]
 [ext_resource type="Script" path="res://Legadot/data_containers/LdTransitionData.gd" id="8_rhamt"]
 [ext_resource type="Script" path="res://Legadot/data_containers/LdVerticalStateData.gd" id="8_v1c8p"]
+[ext_resource type="AudioStream" uid="uid://c8u3x4p5lgsfa" path="res://queueables/win_sfx.wav" id="9_vx6ap"]
 
 [sub_resource type="Resource" id="Resource_j2qft"]
 script = ExtResource("1_sevuw")
@@ -48,6 +50,8 @@ audio_stream = ExtResource("4_uh8pg")
 time = 0.0
 vol = 1.0
 group = "default"
+queueable = false
+allow_dupes = false
 
 [sub_resource type="Resource" id="Resource_t6cuk"]
 script = ExtResource("5_n3r1w")
@@ -56,6 +60,8 @@ audio_stream = ExtResource("6_rxyr5")
 time = 12.8
 vol = 1.0
 group = "default"
+queueable = false
+allow_dupes = false
 
 [sub_resource type="Resource" id="Resource_ij373"]
 script = ExtResource("5_n3r1w")
@@ -64,6 +70,28 @@ audio_stream = ExtResource("7_qynnp")
 time = 25.6
 vol = 1.0
 group = "crates"
+queueable = false
+allow_dupes = false
+
+[sub_resource type="Resource" id="Resource_cono4"]
+script = ExtResource("5_n3r1w")
+name = "collect"
+audio_stream = ExtResource("8_0xe2u")
+time = 0.0
+vol = 1.0
+group = ""
+queueable = true
+allow_dupes = false
+
+[sub_resource type="Resource" id="Resource_q3ffi"]
+script = ExtResource("5_n3r1w")
+name = "win"
+audio_stream = ExtResource("9_vx6ap")
+time = 0.0
+vol = 1.0
+group = ""
+queueable = true
+allow_dupes = false
 
 [sub_resource type="Resource" id="Resource_xi1j8"]
 script = ExtResource("8_rhamt")
@@ -116,7 +144,7 @@ add_only = false
 [resource]
 script = ExtResource("2_k43d3")
 playlist_name = "test_playlist"
-streams = Array[ExtResource("5_n3r1w")]([SubResource("Resource_okw0c"), SubResource("Resource_t6cuk"), SubResource("Resource_ij373")])
+streams = Array[ExtResource("5_n3r1w")]([SubResource("Resource_okw0c"), SubResource("Resource_t6cuk"), SubResource("Resource_ij373"), SubResource("Resource_cono4"), SubResource("Resource_q3ffi")])
 bpm_times = Array[ExtResource("1_sevuw")]([SubResource("Resource_j2qft")])
 vertical_states = Array[ExtResource("8_v1c8p")]([SubResource("Resource_l4pxf"), SubResource("Resource_xwnne")])
 fade_length = 1.625
