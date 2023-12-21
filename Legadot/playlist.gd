@@ -20,6 +20,10 @@ var start_position: float = 0.0
 var sec_position: float = 0.0
 var beat_position: float = 0
 var last_reported_beat: float = 0
+var current_section: String = "":
+	set(sect):
+		self.section.emit(sect)
+		current_section=sect
 
 var playlist_vol: float = 1.0
 
@@ -37,6 +41,11 @@ var playlist_vol: float = 1.0
 
 var tracker_timer: Timer
 
+signal measure(beat_pos: float)
+signal quarter_beat(beat_pos: float)
+signal eighth_beat(beat_pos: float)
+signal section(sect: String)
+
 func _ready():
 	if playlist_data:
 		build_data()
@@ -49,15 +58,20 @@ func _ready():
 		
 		if playlist_data.default_v_state!="":
 			set_v_state(playlist_data.default_v_state)
+		else:
+			fade_playlist(1.0,false,0.0)
 		
 		if playlist_data.default_h_state!="":
 			set_h_state(playlist_data.default_h_state, auto_start)
-			print(h_state)
+			#print(h_state)
 		else:
 			if auto_start and OS.get_name()!="Web":
 				play(0)
 		
 		print(get_beats_since_sect(13.459))
+		await section_reached("game")
+		print("reached game")
+		set_v_state("crates")
 
 func build_data():
 	for stream in playlist_data.streams:
@@ -104,6 +118,11 @@ func build_timeline():
 		if not (t.time in timeline):
 			timeline[t.time] = LdTimelineEvent.new()
 		timeline[t.time].transition = t
+	
+	for sect in playlist_data.sections:
+		if not (sect.time in timeline):
+			timeline[sect.time] = LdTimelineEvent.new()
+		timeline[sect.time].section = sect.section_name
 
 func assign_timers():
 	for e in timeline:
@@ -153,9 +172,9 @@ func play(from: float = 0.0):
 		if (from-time)>=0.0:
 			timeline[time].trigger_event(self, abs(from-time))
 
-func play_from_sect(section: String):
-	if section in h_sections:
-		play(h_sections[section])
+func play_from_sect(sect: String):
+	if sect in h_sections:
+		play(h_sections[sect])
 
 func stop():
 	sec_position = 0
@@ -286,12 +305,30 @@ func _physics_process(delta):
 
 func report_beat():
 	if last_reported_beat!=beat_position:
-		print(beat_position)
-		$Label.text = str(beat_position)
+		#print(beat_position)
+		$Label.text = current_section + ", " + str(beat_position)
+		match fmod(beat_position,4): # <-- 4 = beats in meaure
+			1.0: 
+				#print("measure")
+				self.measure.emit(beat_position)
 		match fmod(beat_position,1):
-			0.0: print("quarter note")
-			0.5: print("eighth note")
+			0.0: 
+				#print("quarter note")
+				self.quarter_beat.emit(beat_position)
+			0.5:
+				self.eighth_beat.emit(beat_position) 
+				#print("eighth note")
 		last_reported_beat = beat_position
+
+func section_reached(sect: String) -> bool:
+	if sect != "":
+		var reached_section: String = await self.section
+		if reached_section == sect:
+			return true
+		else:
+			return await section_reached(sect)
+	else:
+		return false
 
 func _on_button_pressed():
 	play(0.0)

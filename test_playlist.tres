@@ -14,6 +14,7 @@
 script = ExtResource("1_sevuw")
 bpm = 150.0
 time = 0.0
+constant = true
 
 [sub_resource type="Resource" id="Resource_mw4e4"]
 script = ExtResource("3_kmg5l")
@@ -121,5 +122,6 @@ vertical_states = Array[ExtResource("8_v1c8p")]([SubResource("Resource_l4pxf"), 
 fade_length = 1.625
 sections = Array[ExtResource("3_kmg5l")]([SubResource("Resource_mw4e4"), SubResource("Resource_timwd"), SubResource("Resource_rma6q"), SubResource("Resource_enr5t"), SubResource("Resource_u3voh")])
 transitions = Array[ExtResource("8_rhamt")]([SubResource("Resource_xi1j8"), SubResource("Resource_p8mhb"), SubResource("Resource_hxbys"), SubResource("Resource_ike1v"), SubResource("Resource_ike1v"), SubResource("Resource_jtytg"), SubResource("Resource_7k1el")])
+count_subdivision = 1
 default_v_state = "main"
 default_h_state = "tutorial"

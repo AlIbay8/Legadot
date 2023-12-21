@@ -1,0 +1,69 @@
+[gd_resource type="Resource" script_class="LdPlaylistData" load_steps=13 format=3 uid="uid://mll8k3nbsshp"]
+
+[ext_resource type="Script" path="res://Legadot/data_containers/LdBpmData.gd" id="1_2id85"]
+[ext_resource type="Script" path="res://Legadot/data_containers/LdPlaylistData.gd" id="2_01nr2"]
+[ext_resource type="AudioStream" uid="uid://dqv6n746qvi15" path="res://jump_bpm.wav" id="3_uwfq3"]
+[ext_resource type="Script" path="res://Legadot/data_containers/LdStreamData.gd" id="4_plsyg"]
+
+[sub_resource type="Resource" id="Resource_758oa"]
+script = ExtResource("1_2id85")
+bpm = 128.0
+time = 0.0
+constant = true
+
+[sub_resource type="Resource" id="Resource_n5vb3"]
+script = ExtResource("1_2id85")
+bpm = 160.0
+time = 7.5
+constant = true
+
+[sub_resource type="Resource" id="Resource_gky0o"]
+script = ExtResource("1_2id85")
+bpm = 92.0
+time = 13.5
+constant = true
+
+[sub_resource type="Resource" id="Resource_t8u8q"]
+script = ExtResource("1_2id85")
+bpm = 92.0
+time = 18.717
+constant = false
+
+[sub_resource type="Resource" id="Resource_b3tdk"]
+script = ExtResource("1_2id85")
+bpm = 140.0
+time = 22.855
+constant = false
+
+[sub_resource type="Resource" id="Resource_qc31r"]
+script = ExtResource("1_2id85")
+bpm = 110.0
+time = 30.535
+constant = true
+
+[sub_resource type="Resource" id="Resource_4u7k6"]
+script = ExtResource("1_2id85")
+bpm = 0.0
+time = 30.55
+constant = false
+
+[sub_resource type="Resource" id="Resource_avinj"]
+script = ExtResource("4_plsyg")
+name = "jump_bpm"
+audio_stream = ExtResource("3_uwfq3")
+time = 0.0
+vol = 1.0
+group = ""
+
+[resource]
+script = ExtResource("2_01nr2")
+playlist_name = "jump_bpm_playlist"
+streams = Array[ExtResource("4_plsyg")]([SubResource("Resource_avinj")])
+bpm_times = Array[ExtResource("1_2id85")]([SubResource("Resource_758oa"), SubResource("Resource_n5vb3"), SubResource("Resource_gky0o"), SubResource("Resource_t8u8q"), SubResource("Resource_b3tdk"), SubResource("Resource_qc31r"), SubResource("Resource_4u7k6")])
+vertical_states = Array[Resource("res://Legadot/data_containers/LdVerticalStateData.gd")]([])
+fade_length = 0.0
+sections = Array[Resource("res://Legadot/data_containers/LdSectionData.gd")]([])
+transitions = Array[Resource("res://Legadot/data_containers/LdTransitionData.gd")]([])
+count_subdivision = 1
+default_v_state = ""
+default_h_state = ""
