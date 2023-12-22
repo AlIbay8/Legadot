@@ -19,6 +19,11 @@ config/icon="res://icon.svg"
 
 driver/mix_rate.web=44100
 
+[display]
+
+window/stretch/mode="canvas_items"
+window/stretch/aspect="expand"
+
 [input]
 
 debug1={
