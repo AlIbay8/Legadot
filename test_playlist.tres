@@ -1,4 +1,4 @@
-[gd_resource type="Resource" script_class="LdPlaylistData" load_steps=34 format=3 uid="uid://cwxl75pemnjov"]
+[gd_resource type="Resource" script_class="LdPlaylistData" load_steps=35 format=3 uid="uid://cwxl75pemnjov"]
 
 [ext_resource type="Script" path="res://Legadot/data_containers/LdBpmData.gd" id="1_sevuw"]
 [ext_resource type="Script" path="res://Legadot/data_containers/LdPlaylistData.gd" id="2_k43d3"]
@@ -124,6 +124,12 @@ loop = false
 
 [sub_resource type="Resource" id="Resource_ike1v"]
 script = ExtResource("8_rhamt")
+time = 51.2
+destinations = Array[String](["tutorial", "game_intro", "outro"])
+loop = false
+
+[sub_resource type="Resource" id="Resource_f3tj3"]
+script = ExtResource("8_rhamt")
 time = 64.0
 destinations = Array[String](["tutorial", "game_intro", "outro"])
 loop = false
@@ -166,7 +172,7 @@ bpm_times = Array[ExtResource("1_sevuw")]([SubResource("Resource_j2qft")])
 vertical_states = Array[ExtResource("8_v1c8p")]([SubResource("Resource_l4pxf"), SubResource("Resource_xwnne"), SubResource("Resource_we6fy")])
 fade_length = 1.625
 sections = Array[ExtResource("3_kmg5l")]([SubResource("Resource_mw4e4"), SubResource("Resource_timwd"), SubResource("Resource_rma6q"), SubResource("Resource_enr5t"), SubResource("Resource_u3voh")])
-transitions = Array[ExtResource("8_rhamt")]([SubResource("Resource_xi1j8"), SubResource("Resource_p8mhb"), SubResource("Resource_hxbys"), SubResource("Resource_ike1v"), SubResource("Resource_ike1v"), SubResource("Resource_jtytg"), SubResource("Resource_7k1el")])
+transitions = Array[ExtResource("8_rhamt")]([SubResource("Resource_xi1j8"), SubResource("Resource_p8mhb"), SubResource("Resource_hxbys"), SubResource("Resource_ike1v"), SubResource("Resource_f3tj3"), SubResource("Resource_jtytg"), SubResource("Resource_7k1el")])
 count_subdivision = 1
 default_v_state = "main"
 default_h_state = "tutorial"
