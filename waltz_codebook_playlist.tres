@@ -29,8 +29,8 @@ beats_in_measure = 3
 [sub_resource type="Resource" id="Resource_gcngn"]
 script = ExtResource("1_1cm35")
 time = 134.1
-bpm = 200.0
-constant = false
+bpm = 201.0
+constant = true
 beats_in_measure = 3
 
 [sub_resource type="Resource" id="Resource_ixpub"]
@@ -43,8 +43,8 @@ beats_in_measure = 4
 [sub_resource type="Resource" id="Resource_sceb6"]
 script = ExtResource("1_1cm35")
 time = 220.2
-bpm = 200.0
-constant = false
+bpm = 201.0
+constant = true
 beats_in_measure = 3
 
 [sub_resource type="Resource" id="Resource_f4ngv"]
