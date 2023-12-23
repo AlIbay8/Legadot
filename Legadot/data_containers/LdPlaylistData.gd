@@ -16,6 +16,9 @@ class_name LdPlaylistData
 @export_category("Interactive Audio")
 @export var count_subdivision: int = 1
 
+@export_category("Events")
+@export var events: Array[LdEvent]
+
 @export_category("Defaults")
 @export var default_v_state: String
 @export var default_h_state: String

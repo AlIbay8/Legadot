@@ -13,6 +13,7 @@ var v_states: Dictionary = {}
 var h_sections: Dictionary = {}
 var bpms: Dictionary = {}
 var bpm_times: Array
+var event_names: Array
 
 var is_playing: bool = false
 var sec_per_beat: float = 0.0
@@ -49,6 +50,7 @@ signal measure(beat_pos: float)
 signal quarter_beat(beat_pos: float)
 signal eighth_beat(beat_pos: float)
 signal section(sect: String)
+signal event_reached(event: String)
 
 @export_category("Debug")
 @export var debug_label: Label
@@ -83,7 +85,7 @@ func _ready():
 				play(0)
 		
 		print(get_beats_since_sect(13.459))
-		await section_reached("game")
+		await wait_for_section("game")
 		print("reached game")
 		#set_v_state("crates")
 
@@ -96,6 +98,7 @@ func add_stream(stream: LdStream):
 			var player: AudioStreamPlayer = AudioStreamPlayer.new()
 			player.finished.connect(check_end.bind("player"))
 			player.stream = stream.audio_stream
+			player.set_bus("Music")
 			
 			stream_data[stream.name] = {
 				"time": stream.time,
@@ -141,6 +144,12 @@ func build_timeline():
 		if not (sect.time in timeline):
 			timeline[sect.time] = LdTimelineEvent.new()
 		timeline[sect.time].section = sect.section_name
+	
+	for event in playlist_data.events:
+		if not (event.time in timeline):
+			timeline[event.time] = LdTimelineEvent.new()
+		timeline[event.time].event = event
+		if not event_names.has(event.event_name): event_names.append(event.event_name)
 
 func assign_timers():
 	for e in timeline:
@@ -364,13 +373,25 @@ func report_beat():
 		beat_label.text = "Measure, Beat, Time Signature: {msr}, {bt}, {bim}/4".format({"msr": total_measures, "bt": fmod(beat_position-1,current_beats_in_measure)+1, "bim": current_beats_in_measure})
 		last_reported_beat = beat_position
 
-func section_reached(sect: String) -> bool:
-	if sect != "":
+func wait_for_section(sect: String, fire_in_middle: bool = false) -> bool:
+	if sect != "" and sect in h_sections:
+		if fire_in_middle and current_section==sect:
+			return true
 		var reached_section: String = await self.section
 		if reached_section == sect:
 			return true
 		else:
-			return await section_reached(sect)
+			return await wait_for_section(sect)
+	else:
+		return false
+
+func wait_for_event(event: String) -> bool:
+	if event!="" and event_names.has(event):
+		var reached_event: String = await self.event_reached
+		if reached_event == event:
+			return true
+		else:
+			return await wait_for_event(event)
 	else:
 		return false
 
@@ -385,7 +406,7 @@ func check_end(caller: String):
 			stop()
 
 func _on_button_pressed():
-	play(76.80)
+	play(0)
 
 func _on_stop_button_pressed():
 	stop()

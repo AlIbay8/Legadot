@@ -5,6 +5,7 @@ class_name LdTimelineEvent
 @export var transition: LdTransition
 @export var bpm: LdBpm
 @export var section: String
+@export var event: LdEvent
 @export var timer: Timer
 
 func trigger_event(playlist: LdPlaylist, offset: float = -1.0, check_end: bool = true):
@@ -13,7 +14,9 @@ func trigger_event(playlist: LdPlaylist, offset: float = -1.0, check_end: bool =
 		if transition:
 			var transitioned: bool = playlist.check_h_transition(transition)
 			if transitioned: return
-		
+	
+	if event:
+		playlist.event_reached.emit(event.event_name)
 	if section!="":
 		playlist.current_section = section
 	if bpm:
