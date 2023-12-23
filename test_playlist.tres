@@ -18,6 +18,7 @@ script = ExtResource("1_sevuw")
 bpm = 150.0
 time = 0.0
 constant = true
+beats_in_measure = 4
 
 [sub_resource type="Resource" id="Resource_mw4e4"]
 script = ExtResource("3_kmg5l")

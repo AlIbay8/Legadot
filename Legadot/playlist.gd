@@ -24,6 +24,8 @@ var current_section: String = "":
 	set(sect):
 		self.section.emit(sect)
 		current_section=sect
+var current_beats_in_measure: int = 4
+var total_measures: int = 0
 
 var playlist_vol: float = 1.0
 
@@ -40,6 +42,8 @@ var playlist_vol: float = 1.0
 			h_state = state
 
 var tracker_timer: Timer
+var active_timers: int = 0
+var active_players: int = 0
 
 signal measure(beat_pos: float)
 signal quarter_beat(beat_pos: float)
@@ -51,6 +55,7 @@ signal section(sect: String)
 @export var vertical_btn: OptionButton
 @export var horizontal_btn: OptionButton
 @export var queueables_list: HBoxContainer
+@export var beat_label: Label
 
 func _ready():
 	if playlist_data:
@@ -89,6 +94,7 @@ func build_data():
 func add_stream(stream: LdStream):
 	if stream.name != "":
 			var player: AudioStreamPlayer = AudioStreamPlayer.new()
+			player.finished.connect(check_end.bind("player"))
 			player.stream = stream.audio_stream
 			
 			stream_data[stream.name] = {
@@ -124,7 +130,7 @@ func build_timeline():
 	for bpm in playlist_data.bpm_times:
 		if not (bpm.time in timeline):
 			timeline[bpm.time] = LdTimelineEvent.new()
-		timeline[bpm.time].bpm = bpm.bpm
+		timeline[bpm.time].bpm = bpm
 	
 	for t in playlist_data.transitions:
 		if not (t.time in timeline):
@@ -167,6 +173,9 @@ func play(from: float = 0.0):
 		stop(true)
 	is_playing = true
 	start_position = from
+	total_measures=0
+	active_players=0
+	active_timers=0
 	var time_keys = timeline.keys()
 	time_keys.sort()
 	for time in time_keys:
@@ -176,11 +185,12 @@ func play(from: float = 0.0):
 				if not tracker_timer or timeline[time].timer.wait_time>tracker_timer.wait_time:
 					tracker_timer = timeline[time].timer
 				timeline[time].timer.start()
+				self.active_timers+=1
 			else:
-				timeline[time].trigger_event(self, abs(from-time))
+				timeline[time].trigger_event(self, abs(from-time), false)
 			continue
-		if (from-time)>=0.0:
-			timeline[time].trigger_event(self, abs(from-time))
+		elif (from-time)>=0.0:
+			timeline[time].trigger_event(self, abs(from-time), false)
 
 func play_from_sect(sect: String):
 	if sect in h_sections:
@@ -340,8 +350,10 @@ func report_beat():
 	if last_reported_beat!=beat_position:
 		#print(beat_position)
 		debug_label.text = current_section + ", " + str(beat_position)
-		if fmod(beat_position,4)==1.0: # <-- 4 = beats in meaure
+		
+		if fmod(beat_position,current_beats_in_measure)==1.0: # <-- 4 = beats in meaure
 			#print("measure")
+			total_measures+=1
 			self.measure.emit(beat_position)
 		if fmod(beat_position,1)==0.0:
 			#print("quarter note")
@@ -349,7 +361,7 @@ func report_beat():
 		if fmod(beat_position,0.5)==0.0 and playlist_data.count_subdivision>=2:
 			#print("eighth note")
 			self.eighth_beat.emit(beat_position) 
-			
+		beat_label.text = "Measure, Beat, Time Signature: {msr}, {bt}, {bim}/4".format({"msr": total_measures, "bt": fmod(beat_position-1,current_beats_in_measure)+1, "bim": current_beats_in_measure})
 		last_reported_beat = beat_position
 
 func section_reached(sect: String) -> bool:
@@ -362,8 +374,18 @@ func section_reached(sect: String) -> bool:
 	else:
 		return false
 
+func check_end(caller: String):
+	if caller=="timer":
+		active_timers-=1
+		if active_timers==0 and active_players==0:
+			stop()
+	elif caller=="player":
+		active_players-=1
+		if active_players==0 and active_timers==0:
+			stop()
+
 func _on_button_pressed():
-	play(0.0)
+	play(76.80)
 
 func _on_stop_button_pressed():
 	stop()
@@ -372,7 +394,6 @@ func prepare_debug():
 	init_vertical()
 	init_horizontal()
 	init_queueables()
-	pass
 
 func init_vertical():
 	var i: int = 0
@@ -400,9 +421,6 @@ func init_queueables():
 
 func _on_vertical_option_item_selected(index):
 	set_v_state(vertical_btn.get_item_text(index))
-	pass # Replace with function body.
-
 
 func _on_horizontal_option_item_selected(index):
 	set_h_state(horizontal_btn.get_item_text(index))
-	pass # Replace with function body.

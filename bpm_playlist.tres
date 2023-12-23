@@ -11,36 +11,42 @@ script = ExtResource("1_fkmr3")
 bpm = 128.0
 time = 0.0
 constant = true
+beats_in_measure = 4
 
 [sub_resource type="Resource" id="Resource_64wwt"]
 script = ExtResource("1_fkmr3")
 bpm = 128.0
 time = 7.5
 constant = false
+beats_in_measure = 4
 
 [sub_resource type="Resource" id="Resource_d61qk"]
 script = ExtResource("1_fkmr3")
 bpm = 92.0
 time = 16.227
 constant = true
+beats_in_measure = 4
 
 [sub_resource type="Resource" id="Resource_kli3x"]
 script = ExtResource("1_fkmr3")
 bpm = 92.0
 time = 21.445
 constant = false
+beats_in_measure = 4
 
 [sub_resource type="Resource" id="Resource_18htw"]
 script = ExtResource("1_fkmr3")
 bpm = 150.0
 time = 25.412
 constant = true
+beats_in_measure = 4
 
 [sub_resource type="Resource" id="Resource_0hkhw"]
 script = ExtResource("1_fkmr3")
 bpm = 150.0
 time = 31.812
 constant = false
+beats_in_measure = 4
 
 [sub_resource type="Resource" id="Resource_af4qy"]
 script = ExtResource("4_tc6fh")
@@ -49,6 +55,8 @@ audio_stream = ExtResource("3_bmyw5")
 time = 0.0
 vol = 1.0
 group = "main"
+queueable = false
+allow_dupes = false
 
 [sub_resource type="Resource" id="Resource_2y7rm"]
 script = ExtResource("5_s6ci3")

@@ -12,42 +12,49 @@ script = ExtResource("1_dkn5q")
 bpm = 128.0
 time = 0.0
 constant = true
+beats_in_measure = 4
 
 [sub_resource type="Resource" id="Resource_n5vb3"]
 script = ExtResource("1_dkn5q")
 bpm = 160.0
 time = 7.5
 constant = true
+beats_in_measure = 4
 
 [sub_resource type="Resource" id="Resource_gky0o"]
 script = ExtResource("1_dkn5q")
 bpm = 92.0
 time = 13.5
 constant = true
+beats_in_measure = 4
 
 [sub_resource type="Resource" id="Resource_t8u8q"]
 script = ExtResource("1_dkn5q")
 bpm = 92.0
 time = 18.717
 constant = false
+beats_in_measure = 4
 
 [sub_resource type="Resource" id="Resource_b3tdk"]
 script = ExtResource("1_dkn5q")
 bpm = 140.0
 time = 22.855
 constant = false
+beats_in_measure = 4
 
 [sub_resource type="Resource" id="Resource_qc31r"]
 script = ExtResource("1_dkn5q")
 bpm = 110.0
 time = 30.535
 constant = true
+beats_in_measure = 4
 
 [sub_resource type="Resource" id="Resource_4u7k6"]
 script = ExtResource("1_dkn5q")
 bpm = 0.0
 time = 30.55
 constant = false
+beats_in_measure = 4
 
 [sub_resource type="Resource" id="Resource_avinj"]
 script = ExtResource("4_wxtjg")
