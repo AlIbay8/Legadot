@@ -15,8 +15,7 @@ playlist_data = ExtResource("2_nexjd")
 stream_players = NodePath("StreamPlayers")
 timers = NodePath("Timers")
 auto_start = true
-v_state = "main"
-h_state = "game"
+h_state = "tutorial"
 debug_label = NodePath("DebugMenu/MarginContainer/VBoxContainer/DebugLabel")
 vertical_btn = NodePath("DebugMenu/MarginContainer/VBoxContainer/VerticalHorizontalControlsContainter/VerticalOption")
 horizontal_btn = NodePath("DebugMenu/MarginContainer/VBoxContainer/VerticalHorizontalControlsContainter/HorizontalOption")
@@ -53,6 +52,7 @@ layout_mode = 2
 
 [node name="DebugLabel" type="Label" parent="DebugMenu/MarginContainer/VBoxContainer"]
 layout_mode = 2
+text = "tutorial, 27"
 label_settings = SubResource("LabelSettings_v5mwe")
 
 [node name="SongControls" type="HBoxContainer" parent="DebugMenu/MarginContainer/VBoxContainer"]
@@ -75,6 +75,7 @@ text = "V State:"
 
 [node name="VerticalOption" type="OptionButton" parent="DebugMenu/MarginContainer/VBoxContainer/VerticalHorizontalControlsContainter"]
 layout_mode = 2
+selected = 0
 
 [node name="Label2" type="Label" parent="DebugMenu/MarginContainer/VBoxContainer/VerticalHorizontalControlsContainter"]
 layout_mode = 2
@@ -82,6 +83,7 @@ text = "H State:"
 
 [node name="HorizontalOption" type="OptionButton" parent="DebugMenu/MarginContainer/VBoxContainer/VerticalHorizontalControlsContainter"]
 layout_mode = 2
+selected = 0
 
 [node name="QueuablesContainer" type="HBoxContainer" parent="DebugMenu/MarginContainer/VBoxContainer"]
 layout_mode = 2
@@ -92,7 +94,7 @@ text = "Queueables: "
 
 [node name="BeatLabel" type="Label" parent="DebugMenu/MarginContainer/VBoxContainer"]
 layout_mode = 2
-text = "Measure, Beat, Time Signature: "
+text = "Measure, Beat, Time Signature: 7, 3, 4/4"
 
 [connection signal="pressed" from="DebugMenu/MarginContainer/VBoxContainer/SongControls/PlayButton" to="." method="_on_button_pressed"]
 [connection signal="pressed" from="DebugMenu/MarginContainer/VBoxContainer/SongControls/StopButton" to="." method="_on_stop_button_pressed"]

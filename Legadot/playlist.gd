@@ -60,6 +60,9 @@ signal event_reached(event: String)
 @export var beat_label: Label
 
 func _ready():
+	init_playlist()
+
+func init_playlist():
 	if playlist_data:
 		build_data()
 		build_groups()
@@ -81,13 +84,12 @@ func _ready():
 			h_state = playlist_data.default_h_state
 			set_h_state(playlist_data.default_h_state, auto_start)
 		else:
-			if auto_start and OS.get_name()!="Web":
-				play(0)
-		
-		print(get_beats_since_sect(13.459))
-		await wait_for_section("game")
-		print("reached game")
-		#set_v_state("crates")
+			if not Engine.is_editor_hint():
+				if auto_start and OS.get_name()!="Web":
+					play(0)
+					pass
+			else:
+				stop()
 
 func build_data():
 	for stream in playlist_data.streams:
@@ -203,7 +205,8 @@ func play(from: float = 0.0):
 
 func play_from_sect(sect: String):
 	if sect in h_sections:
-		play(h_sections[sect])
+		if not Engine.is_editor_hint():
+			play(h_sections[sect])
 
 func stop(seek_stop: bool = false):
 	sec_position = 0
@@ -341,11 +344,6 @@ func play_queueable(stream: String, wait_for_beat: float = 1.0):
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _physics_process(delta):
-	if Input.is_action_just_pressed("debug1"):
-		play_queueable("win", 1.0)
-	if Input.is_action_just_pressed("debug2"):
-		play_queueable("collect", 1.0)
-	
 	if is_playing:
 		if tracker_timer and !tracker_timer.is_stopped():
 			sec_position = start_position+tracker_timer.wait_time - tracker_timer.time_left
@@ -417,6 +415,7 @@ func prepare_debug():
 	init_queueables()
 
 func init_vertical():
+	vertical_btn.clear()
 	var i: int = 0
 	for v in v_states:
 		vertical_btn.add_item(v)
@@ -425,6 +424,7 @@ func init_vertical():
 		i+=1
 
 func init_horizontal():
+	horizontal_btn.clear()
 	var i: int = 0
 	for h in h_sections:
 		horizontal_btn.add_item(h)
