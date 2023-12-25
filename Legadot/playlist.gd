@@ -16,7 +16,6 @@ var bpm_times: Array
 var event_names: Array
 
 var is_playing: bool = false
-var sec_per_beat: float = 0.0
 var start_position: float = 0.0
 var sec_position: float = 0.0
 var beat_position: float = 0
@@ -26,6 +25,7 @@ var current_section: String = "":
 		self.section.emit(sect)
 		current_section=sect
 var current_beats_in_measure: int = 4
+var current_beat_value: int = 4
 var total_measures: int = 0
 
 var playlist_vol: float = 1.0
@@ -43,6 +43,7 @@ var playlist_vol: float = 1.0
 			h_state = state
 
 var tracker_timer: Timer
+var longest_time: float = 0.0
 var active_timers: int = 0
 var active_players: int = 0
 
@@ -51,6 +52,7 @@ signal quarter_beat(beat_pos: float)
 signal eighth_beat(beat_pos: float)
 signal section(sect: String)
 signal event_reached(event: String)
+signal playlist_finished()
 
 @export_category("Debug")
 @export var debug_label: Label
@@ -97,23 +99,28 @@ func build_data():
 
 func add_stream(stream: LdStream):
 	if stream.name != "":
-			var player: AudioStreamPlayer = AudioStreamPlayer.new()
-			player.finished.connect(check_end.bind("player"))
-			player.stream = stream.audio_stream
-			player.set_bus("Music")
-			
-			stream_data[stream.name] = {
-				"time": stream.time,
-				"player": player,
-				"max_vol": stream.vol,
-				"stream_vol": stream.vol,
-				"group": stream.group,
-				"queueable": stream.queueable,
-				"connected": 0.0
-			}
-			
-			stream_players.add_child(player)
+		var player: AudioStreamPlayer = AudioStreamPlayer.new()
+		player.stream = AudioStreamPolyphonic.new() if stream.allow_dupes else stream.audio_stream
+		player.set_bus("Music")
+		
+		stream.player = player
+		stream.max_vol = stream.vol
+		stream_data[stream.name] = stream
+		check_longest_time(stream.time, stream.audio_stream)
+		
+		stream_players.add_child(player)
 
+func check_longest_time(time: float, stream: AudioStream):
+	var stream_length: float = 0.0
+	if stream is AudioStreamRandomizer:
+		for i in range(stream.streams_count):
+			if stream.get_stream(i).get_length()>stream_length:
+				stream_length = stream.get_stream(i).get_length()
+	else:
+		stream_length = stream.get_length()
+	if time+stream_length>longest_time:
+		longest_time = time+stream_length
+	
 func build_groups():
 	for s in stream_data:
 		var stream = stream_data[s]
@@ -129,29 +136,47 @@ func build_timeline():
 		if stream_data[s].queueable: continue
 		var s_time = stream_data[s].time
 		if not (s_time in timeline):
-			timeline[s_time] = LdTimelineEvent.new()
+			timeline[s_time] = LdTimelineEvent.new(s_time)
 		timeline[s_time].streams.append(stream_data[s])
 	
 	for bpm in playlist_data.bpm_times:
 		if not (bpm.time in timeline):
-			timeline[bpm.time] = LdTimelineEvent.new()
+			timeline[bpm.time] = LdTimelineEvent.new(bpm.time)
 		timeline[bpm.time].bpm = bpm
 	
 	for t in playlist_data.transitions:
 		if not (t.time in timeline):
-			timeline[t.time] = LdTimelineEvent.new()
+			timeline[t.time] = LdTimelineEvent.new(t.time)
 		timeline[t.time].transition = t
 	
 	for sect in playlist_data.sections:
 		if not (sect.time in timeline):
-			timeline[sect.time] = LdTimelineEvent.new()
+			timeline[sect.time] = LdTimelineEvent.new(sect.time)
 		timeline[sect.time].section = sect.section_name
 	
 	for event in playlist_data.events:
 		if not (event.time in timeline):
-			timeline[event.time] = LdTimelineEvent.new()
+			timeline[event.time] = LdTimelineEvent.new(event.time)
 		timeline[event.time].event = event
 		if not event_names.has(event.event_name): event_names.append(event.event_name)
+	
+	var end: float = 0.0
+	if playlist_data.end_time<=0.0:
+		print("auto time")
+		end = longest_time
+		playlist_data.end_time = longest_time
+		var timeline_times: Array = timeline.keys()
+		timeline_times.sort()
+		if end>timeline_times[-1]:
+			timeline[end] = LdTimelineEvent.new(end)
+		else:
+			playlist_data.end_time = timeline_times[-1]
+	else:
+		print("playlist time")
+		end = playlist_data.end_time
+		if not (end in timeline):
+			timeline[end] = LdTimelineEvent.new(end)
+	print("end time: ", end, ", ", playlist_data.end_time)
 
 func assign_timers():
 	for e in timeline:
@@ -228,7 +253,7 @@ func fade_stream(vol_linear, stream: String, fade_override: float = -1.0):
 		var stream_tween = create_tween()
 		stream_tween.set_parallel(true)
 		
-		stream_tween.tween_method(interpolate_vol.bind(stream_data[stream], 0), stream_data[stream].stream_vol, vol_linear, playlist_data.fade_length if fade_override<0.0 else fade_override)
+		stream_tween.tween_method(interpolate_vol.bind(stream_data[stream], 0), stream_data[stream].vol, vol_linear, playlist_data.fade_length if fade_override<0.0 else fade_override)
 	pass
 
 func fade_group(vol_linear: float, group: String, fade_override: float = -1.0):
@@ -240,6 +265,7 @@ func fade_group(vol_linear: float, group: String, fade_override: float = -1.0):
 			group_tween.tween_method(interpolate_vol.bind(stream, 1), groups[group].vol, vol_linear, playlist_data.fade_length if fade_override<0.0 else fade_override)
 
 func fade_playlist(vol_linear: float, stop_audio: bool = false, fade_override: float = -1.0):
+	if stream_data.is_empty(): return
 	var playlist_tween = create_tween()
 	playlist_tween.set_parallel(true)
 	
@@ -249,15 +275,15 @@ func fade_playlist(vol_linear: float, stop_audio: bool = false, fade_override: f
 	if stop_audio and playlist_vol<=0.0:
 		stop()
 
-func interpolate_vol(vol_linear: float, stream: Dictionary, type: int):
+func interpolate_vol(vol_linear: float, stream: LdStream, type: int):
 	match type:
 		0:
-			stream.stream_vol = vol_linear
+			stream.vol = vol_linear
 		1:
 			groups[stream.group].vol = vol_linear
 		2: 
 			playlist_vol = vol_linear
-	var new_vol: float = stream.stream_vol*groups[stream.group].vol*playlist_vol
+	var new_vol: float = stream.vol*groups[stream.group].vol*playlist_vol
 	stream.player.volume_db = linear_to_db(new_vol)
 
 # Vertical Remixing
@@ -311,6 +337,9 @@ func get_beats_since_sect(time: float) -> float:
 			var c_b: float = bpms[c_t].bpm
 			var n_b: float = bpms[n_t].bpm if not bpms[c_t].constant else bpms[c_t].bpm
 			
+			c_b/=(4.0/bpms[c_t].beat_value)
+			n_b/=(4.0/bpms[n_t].beat_value)
+			
 			var dt: float = n_t-c_t if (n_t!=c_t) else 1.0
 			var db_dt: float = (n_b-c_b)/dt
 			var x_t: float = time-c_t
@@ -321,7 +350,7 @@ func get_beats_since_sect(time: float) -> float:
 	return 0
 
 func play_queueable(stream: String, wait_for_beat: float = 1.0):
-	if stream in stream_data:
+	if stream in stream_data and is_playing:
 		var queueable = stream_data[stream]
 		
 		if queueable.connected == wait_for_beat: return
@@ -334,15 +363,12 @@ func play_queueable(stream: String, wait_for_beat: float = 1.0):
 				await self.eighth_beat
 			4.0:
 				queueable.connected = 4.0
-				await self.measure # <-- 4 = beats in measure
+				await self.measure
 			_:
 				return
-		print("play ", stream)
-		queueable.player.play(0+AudioServer.get_time_to_next_mix())
+		queueable.play(0+AudioServer.get_time_to_next_mix())
 		queueable.connected = 0.0
 	
-
-# Called every frame. 'delta' is the elapsed time since the previous frame.
 func _physics_process(delta):
 	if is_playing:
 		if tracker_timer and !tracker_timer.is_stopped():
@@ -355,20 +381,16 @@ func _physics_process(delta):
 
 func report_beat():
 	if last_reported_beat!=beat_position:
-		#print(beat_position)
 		debug_label.text = current_section + ", " + str(beat_position)
 		
 		if fmod(beat_position,current_beats_in_measure)==1.0: # <-- 4 = beats in meaure
-			#print("measure")
 			total_measures+=1
 			self.measure.emit(beat_position)
 		if fmod(beat_position,1)==0.0:
-			#print("quarter note")
 			self.quarter_beat.emit(beat_position)
 		if fmod(beat_position,0.5)==0.0 and playlist_data.count_subdivision>=2:
-			#print("eighth note")
 			self.eighth_beat.emit(beat_position) 
-		beat_label.text = "Measure, Beat, Time Signature: {msr}, {bt}, {bim}/4".format({"msr": total_measures, "bt": fmod(beat_position-1,current_beats_in_measure)+1, "bim": current_beats_in_measure})
+		beat_label.text = "Measure, Beat, Time Signature: {msr}, {bt}, {bim}/{bv}".format({"msr": total_measures, "bt": fmod(beat_position-1,current_beats_in_measure)+1, "bim": current_beats_in_measure, "bv":current_beat_value})
 		last_reported_beat = beat_position
 
 func wait_for_section(sect: String, fire_in_middle: bool = false) -> bool:
@@ -393,18 +415,15 @@ func wait_for_event(event: String) -> bool:
 	else:
 		return false
 
-func check_end(caller: String):
-	if caller=="timer":
-		active_timers-=1
-		if active_timers==0 and active_players==0:
-			stop()
-	elif caller=="player":
-		active_players-=1
-		if active_players==0 and active_timers==0:
-			stop()
+func check_end(time_check: float):
+	if time_check==playlist_data.end_time:
+		stop()
+		self.playlist_finished.emit()
+		if playlist_data.loop:
+			play(playlist_data.loop_offset)
 
 func _on_button_pressed():
-	play(0)
+	play(0.0)
 
 func _on_stop_button_pressed():
 	stop()
@@ -438,7 +457,7 @@ func init_queueables():
 			var btn: Button = Button.new()
 			btn.text = s
 			queueables_list.add_child(btn)
-			btn.pressed.connect(play_queueable.bind(s))
+			btn.pressed.connect(play_queueable.bind(s, 1.0))
 
 func _on_vertical_option_item_selected(index):
 	set_v_state(vertical_btn.get_item_text(index))

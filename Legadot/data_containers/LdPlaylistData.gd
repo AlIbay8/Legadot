@@ -4,6 +4,9 @@ class_name LdPlaylistData
 @export var playlist_name: String
 @export var streams: Array[LdStream]
 @export var bpm_times: Array[LdBpm]
+@export var end_time: float = 0.0
+@export var loop: bool = false
+@export var loop_offset: float = 0.0
 
 @export_category("Vertical Remixing")
 @export var vertical_states: Array[LdVerticalState]

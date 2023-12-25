@@ -8,45 +8,51 @@
 
 [sub_resource type="Resource" id="Resource_br7gk"]
 script = ExtResource("1_fkmr3")
-bpm = 128.0
 time = 0.0
+bpm = 128.0
 constant = true
 beats_in_measure = 4
+beat_value = 4
 
 [sub_resource type="Resource" id="Resource_64wwt"]
 script = ExtResource("1_fkmr3")
-bpm = 128.0
 time = 7.5
+bpm = 128.0
 constant = false
 beats_in_measure = 4
+beat_value = 4
 
 [sub_resource type="Resource" id="Resource_d61qk"]
 script = ExtResource("1_fkmr3")
-bpm = 92.0
 time = 16.227
+bpm = 92.0
 constant = true
 beats_in_measure = 4
+beat_value = 4
 
 [sub_resource type="Resource" id="Resource_kli3x"]
 script = ExtResource("1_fkmr3")
-bpm = 92.0
 time = 21.445
+bpm = 92.0
 constant = false
 beats_in_measure = 4
+beat_value = 4
 
 [sub_resource type="Resource" id="Resource_18htw"]
 script = ExtResource("1_fkmr3")
-bpm = 150.0
 time = 25.412
+bpm = 150.0
 constant = true
 beats_in_measure = 4
+beat_value = 4
 
 [sub_resource type="Resource" id="Resource_0hkhw"]
 script = ExtResource("1_fkmr3")
-bpm = 150.0
 time = 31.812
+bpm = 150.0
 constant = false
 beats_in_measure = 4
+beat_value = 4
 
 [sub_resource type="Resource" id="Resource_af4qy"]
 script = ExtResource("4_tc6fh")
@@ -69,10 +75,14 @@ script = ExtResource("2_3jy7a")
 playlist_name = "bpm_playlist"
 streams = Array[ExtResource("4_tc6fh")]([SubResource("Resource_af4qy")])
 bpm_times = Array[ExtResource("1_fkmr3")]([SubResource("Resource_br7gk"), SubResource("Resource_64wwt"), SubResource("Resource_d61qk"), SubResource("Resource_kli3x"), SubResource("Resource_18htw"), SubResource("Resource_0hkhw")])
+end_time = 0.0
+loop = false
+loop_offset = 0.0
 vertical_states = Array[ExtResource("5_s6ci3")]([SubResource("Resource_2y7rm")])
 fade_length = 0.0
 sections = Array[Resource("res://Legadot/data_containers/LdSectionData.gd")]([])
 transitions = Array[Resource("res://Legadot/data_containers/LdTransitionData.gd")]([])
 count_subdivision = 1
+events = Array[Resource("res://Legadot/data_containers/LdEventData.gd")]([])
 default_v_state = ""
 default_h_state = ""

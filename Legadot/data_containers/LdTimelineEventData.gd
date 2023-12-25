@@ -1,12 +1,16 @@
 extends Resource
 class_name LdTimelineEvent
 
+@export var time: float
 @export var streams: Array = []
 @export var transition: LdTransition
 @export var bpm: LdBpm
 @export var section: String
 @export var event: LdEvent
 @export var timer: Timer
+
+func _init(event_time: float=0.0):
+	self.time = event_time
 
 func trigger_event(playlist: LdPlaylist, offset: float = -1.0, check_end: bool = true):
 	if offset<0.0:
@@ -23,9 +27,10 @@ func trigger_event(playlist: LdPlaylist, offset: float = -1.0, check_end: bool =
 		playlist.current_section = section
 	if bpm:
 		playlist.current_beats_in_measure = bpm.beats_in_measure
+		playlist.current_beat_value = bpm.beat_value
 	for s in streams:
 		playlist.active_players+=1
-		s.player.play(offset)
+		s.play(offset)
 	
 	if check_end:
-		playlist.check_end("timer")
+		playlist.check_end(time)

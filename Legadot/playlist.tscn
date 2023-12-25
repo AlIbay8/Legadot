@@ -75,7 +75,6 @@ text = "V State:"
 
 [node name="VerticalOption" type="OptionButton" parent="DebugMenu/MarginContainer/VBoxContainer/VerticalHorizontalControlsContainter"]
 layout_mode = 2
-selected = 0
 
 [node name="Label2" type="Label" parent="DebugMenu/MarginContainer/VBoxContainer/VerticalHorizontalControlsContainter"]
 layout_mode = 2
@@ -83,7 +82,6 @@ text = "H State:"
 
 [node name="HorizontalOption" type="OptionButton" parent="DebugMenu/MarginContainer/VBoxContainer/VerticalHorizontalControlsContainter"]
 layout_mode = 2
-selected = 0
 
 [node name="QueuablesContainer" type="HBoxContainer" parent="DebugMenu/MarginContainer/VBoxContainer"]
 layout_mode = 2
