@@ -75,6 +75,7 @@ text = "V State:"
 
 [node name="VerticalOption" type="OptionButton" parent="DebugMenu/MarginContainer/VBoxContainer/VerticalHorizontalControlsContainter"]
 layout_mode = 2
+allow_reselect = true
 
 [node name="Label2" type="Label" parent="DebugMenu/MarginContainer/VBoxContainer/VerticalHorizontalControlsContainter"]
 layout_mode = 2

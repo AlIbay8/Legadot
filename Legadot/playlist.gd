@@ -89,7 +89,6 @@ func init_playlist():
 			if not Engine.is_editor_hint():
 				if auto_start and OS.get_name()!="Web":
 					play(0)
-					pass
 			else:
 				stop()
 
@@ -162,7 +161,6 @@ func build_timeline():
 	
 	var end: float = 0.0
 	if playlist_data.end_time<=0.0:
-		print("auto time")
 		end = longest_time
 		playlist_data.end_time = longest_time
 		var timeline_times: Array = timeline.keys()
@@ -172,11 +170,10 @@ func build_timeline():
 		else:
 			playlist_data.end_time = timeline_times[-1]
 	else:
-		print("playlist time")
 		end = playlist_data.end_time
 		if not (end in timeline):
 			timeline[end] = LdTimelineEvent.new(end)
-	print("end time: ", end, ", ", playlist_data.end_time)
+	#print("end time: ", end, ", ", playlist_data.end_time)
 
 func assign_timers():
 	for e in timeline:
@@ -254,7 +251,6 @@ func fade_stream(vol_linear, stream: String, fade_override: float = -1.0):
 		stream_tween.set_parallel(true)
 		
 		stream_tween.tween_method(interpolate_vol.bind(stream_data[stream], 0), stream_data[stream].vol, vol_linear, playlist_data.fade_length if fade_override<0.0 else fade_override)
-	pass
 
 func fade_group(vol_linear: float, group: String, fade_override: float = -1.0):
 	if group in groups and group!="":
@@ -294,6 +290,16 @@ func set_v_state(new_state: String, fade_override: float = -1.0):
 				fade_group(0.0, group, fade_override)
 		for group in v_states[new_state].groups:
 			fade_group(1.0, group, fade_override)
+
+# may or may not keep this in
+func toggle_v_state(state: String, fade_override: float = -1.0):
+	if state in v_states:
+		if not v_states[state].add_only:
+			for group in groups:
+				fade_group(0.0, group, fade_override)
+		for group in v_states[state].groups:
+			var current_group_vol = groups[group].vol
+			fade_group(1.0 if current_group_vol<=0.0 else 0.0, group, fade_override)
 
 # Horizontal Remixing
 func check_h_transition(transition: LdTransition) -> bool:
@@ -337,8 +343,8 @@ func get_beats_since_sect(time: float) -> float:
 			var c_b: float = bpms[c_t].bpm
 			var n_b: float = bpms[n_t].bpm if not bpms[c_t].constant else bpms[c_t].bpm
 			
-			c_b/=(4.0/bpms[c_t].beat_value)
-			n_b/=(4.0/bpms[n_t].beat_value)
+#			c_b/=(4.0/bpms[c_t].beat_value)
+#			n_b/=(4.0/bpms[n_t].beat_value)
 			
 			var dt: float = n_t-c_t if (n_t!=c_t) else 1.0
 			var db_dt: float = (n_b-c_b)/dt
@@ -460,7 +466,7 @@ func init_queueables():
 			btn.pressed.connect(play_queueable.bind(s, 1.0))
 
 func _on_vertical_option_item_selected(index):
-	set_v_state(vertical_btn.get_item_text(index))
+	toggle_v_state(vertical_btn.get_item_text(index))
 
 func _on_horizontal_option_item_selected(index):
 	set_h_state(horizontal_btn.get_item_text(index))

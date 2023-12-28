@@ -11,6 +11,7 @@ time = 0.0
 bpm = 200.0
 constant = false
 beats_in_measure = 3
+beat_value = 4
 
 [sub_resource type="Resource" id="Resource_e7vxa"]
 script = ExtResource("1_1cm35")
@@ -18,6 +19,7 @@ time = 57.6
 bpm = 200.0
 constant = true
 beats_in_measure = 4
+beat_value = 4
 
 [sub_resource type="Resource" id="Resource_akr6n"]
 script = ExtResource("1_1cm35")
@@ -25,6 +27,7 @@ time = 76.8
 bpm = 201.0
 constant = true
 beats_in_measure = 3
+beat_value = 4
 
 [sub_resource type="Resource" id="Resource_gcngn"]
 script = ExtResource("1_1cm35")
@@ -32,6 +35,7 @@ time = 134.1
 bpm = 201.0
 constant = true
 beats_in_measure = 3
+beat_value = 4
 
 [sub_resource type="Resource" id="Resource_ixpub"]
 script = ExtResource("1_1cm35")
@@ -39,6 +43,7 @@ time = 162.6
 bpm = 200.0
 constant = false
 beats_in_measure = 4
+beat_value = 4
 
 [sub_resource type="Resource" id="Resource_sceb6"]
 script = ExtResource("1_1cm35")
@@ -46,6 +51,7 @@ time = 220.2
 bpm = 201.0
 constant = true
 beats_in_measure = 3
+beat_value = 4
 
 [sub_resource type="Resource" id="Resource_f4ngv"]
 script = ExtResource("4_iglqx")
@@ -62,10 +68,14 @@ script = ExtResource("2_qyt77")
 playlist_name = "waltz_codebook_playlist"
 streams = Array[ExtResource("4_iglqx")]([SubResource("Resource_f4ngv")])
 bpm_times = Array[ExtResource("1_1cm35")]([SubResource("Resource_mm28g"), SubResource("Resource_e7vxa"), SubResource("Resource_akr6n"), SubResource("Resource_gcngn"), SubResource("Resource_ixpub"), SubResource("Resource_sceb6")])
+end_time = 0.0
+loop = false
+loop_offset = 0.0
 vertical_states = Array[Resource("res://Legadot/data_containers/LdVerticalStateData.gd")]([])
 fade_length = 0.0
 sections = Array[Resource("res://Legadot/data_containers/LdSectionData.gd")]([])
 transitions = Array[Resource("res://Legadot/data_containers/LdTransitionData.gd")]([])
 count_subdivision = 1
+events = Array[Resource("res://Legadot/data_containers/LdEventData.gd")]([])
 default_v_state = ""
 default_h_state = ""
