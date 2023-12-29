@@ -466,7 +466,7 @@ func init_queueables():
 			btn.pressed.connect(play_queueable.bind(s, 1.0))
 
 func _on_vertical_option_item_selected(index):
-	toggle_v_state(vertical_btn.get_item_text(index))
+	set_v_state(vertical_btn.get_item_text(index))
 
 func _on_horizontal_option_item_selected(index):
 	set_h_state(horizontal_btn.get_item_text(index))

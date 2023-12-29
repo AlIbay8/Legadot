@@ -22,7 +22,7 @@
 [ext_resource type="AudioStream" uid="uid://dhm4bbulgerww" path="res://queueables/f.wav" id="18_oelkl"]
 [ext_resource type="AudioStream" uid="uid://dn2s2jb6i1uef" path="res://queueables/a5.wav" id="20_egjwn"]
 
-[sub_resource type="Resource" id="Resource_j2qft"]
+[sub_resource type="Resource" id="Resource_u02sm"]
 script = ExtResource("1_sevuw")
 time = 0.0
 bpm = 150.0
@@ -227,7 +227,6 @@ add_only = false
 script = ExtResource("2_k43d3")
 playlist_name = "test_playlist"
 streams = Array[ExtResource("5_n3r1w")]([SubResource("Resource_okw0c"), SubResource("Resource_t6cuk"), SubResource("Resource_ij373"), SubResource("Resource_a5ip5"), SubResource("Resource_cono4"), SubResource("Resource_q3ffi"), SubResource("Resource_4kcm3"), SubResource("Resource_ahwdy")])
-bpm_times = Array[ExtResource("1_sevuw")]([SubResource("Resource_j2qft")])
 end_time = 0.0
 loop = false
 loop_offset = 0.0
@@ -235,6 +234,7 @@ vertical_states = Array[ExtResource("8_v1c8p")]([SubResource("Resource_l4pxf"), 
 fade_length = 1.625
 sections = Array[ExtResource("3_kmg5l")]([SubResource("Resource_mw4e4"), SubResource("Resource_timwd"), SubResource("Resource_rma6q"), SubResource("Resource_enr5t"), SubResource("Resource_u3voh")])
 transitions = Array[ExtResource("8_rhamt")]([SubResource("Resource_xi1j8"), SubResource("Resource_p8mhb"), SubResource("Resource_hxbys"), SubResource("Resource_ike1v"), SubResource("Resource_f3tj3"), SubResource("Resource_jtytg"), SubResource("Resource_7k1el")])
+bpm_times = Array[ExtResource("1_sevuw")]([SubResource("Resource_u02sm")])
 count_subdivision = 1
 events = Array[Resource("res://Legadot/data_containers/LdEventData.gd")]([])
 default_v_state = "main"
