@@ -8,21 +8,21 @@ class_name LdPlaylistData
 @export var loop: bool = false
 @export var loop_offset: float = 0.0
 
-@export_subgroup("Vertical Remixing")
+@export_group("Vertical Remixing")
 @export var vertical_states: Array[LdVerticalState]
 @export var fade_length: float
 
-@export_subgroup("Horizontal Remixing")
+@export_group("Horizontal Remixing")
 @export var sections: Array[LdSection]
 @export var transitions: Array[LdTransition]
 
-@export_subgroup("Interactive Audio")
+@export_group("Interactive Audio")
 @export var bpm_times: Array[LdBpm]
 @export var count_subdivision: int = 1
 
-@export_subgroup("Events")
+@export_group("Events")
 @export var events: Array[LdEvent]
 
-@export_subgroup("Defaults")
+@export_group("Defaults")
 @export var default_v_state: String
 @export var default_h_state: String
