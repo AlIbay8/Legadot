@@ -84,11 +84,12 @@ func init_playlist():
 		
 		if playlist_data.default_h_state!="":
 			h_state = playlist_data.default_h_state
+			await get_tree().create_timer(1.0).timeout
 			set_h_state(playlist_data.default_h_state, auto_start)
 		else:
 			if not Engine.is_editor_hint():
 				if auto_start and OS.get_name()!="Web":
-					play(0)
+					play(-1)
 			else:
 				stop()
 
