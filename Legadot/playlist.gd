@@ -77,7 +77,7 @@ func init_playlist():
 		prepare_debug()
 		
 		if playlist_data.default_v_state!="":
-			v_state = playlist_data.default_v_state
+			#v_state = playlist_data.default_v_state
 			set_v_state(playlist_data.default_v_state,0.0)
 		else:
 			fade_playlist(1.0,false,0.0)
@@ -254,6 +254,7 @@ func fade_stream(vol_linear, stream: String, fade_override: float = -1.0):
 		stream_tween.tween_method(interpolate_vol.bind(stream_data[stream], 0), stream_data[stream].vol, vol_linear, playlist_data.fade_length if fade_override<0.0 else fade_override)
 
 func fade_group(vol_linear: float, group: String, fade_override: float = -1.0):
+	print(fade_override)
 	if group in groups and group!="":
 		var group_tween = create_tween()
 		group_tween.set_parallel(true)

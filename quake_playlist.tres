@@ -1,0 +1,116 @@
+[gd_resource type="Resource" script_class="LdPlaylistData" load_steps=21 format=3 uid="uid://busknx7fgmyl1"]
+
+[ext_resource type="Script" path="res://Legadot/data_containers/LdBpmData.gd" id="1_ta24g"]
+[ext_resource type="Script" path="res://Legadot/data_containers/LdPlaylistData.gd" id="2_wwwci"]
+[ext_resource type="AudioStream" uid="uid://btnbhbnpuxpjt" path="res://eighth-hour/quake-6-45-new.wav" id="3_qethh"]
+[ext_resource type="Script" path="res://Legadot/data_containers/LdStreamData.gd" id="4_lyebm"]
+[ext_resource type="AudioStream" uid="uid://bp4o2ccnfg620" path="res://eighth-hour/quake-7-15-new.wav" id="5_4efi6"]
+[ext_resource type="AudioStream" uid="uid://0vnqhdumy505" path="res://eighth-hour/quake-7-45.wav" id="6_eme83"]
+[ext_resource type="AudioStream" uid="uid://cdn85ml2k7ngw" path="res://eighth-hour/quake-8-15.wav" id="7_ubhnp"]
+[ext_resource type="AudioStream" uid="uid://djil48jn2f6xr" path="res://eighth-hour/quake-7-15-nowhite.wav" id="8_ssnys"]
+[ext_resource type="Script" path="res://Legadot/data_containers/LdVerticalStateData.gd" id="9_f538g"]
+
+[sub_resource type="Resource" id="Resource_lu3cj"]
+script = ExtResource("1_ta24g")
+time = 0.0
+bpm = 120.0
+constant = true
+beats_in_measure = 4
+beat_value = 4
+
+[sub_resource type="Resource" id="Resource_i74m2"]
+script = ExtResource("4_lyebm")
+name = "q6-45"
+audio_stream = ExtResource("3_qethh")
+time = 0.0
+vol = 1.0
+group = "6-45"
+queueable = false
+allow_dupes = false
+
+[sub_resource type="Resource" id="Resource_t8o4w"]
+script = ExtResource("4_lyebm")
+name = "q7-15"
+audio_stream = ExtResource("5_4efi6")
+time = 0.0
+vol = 1.0
+group = "7-15"
+queueable = false
+allow_dupes = false
+
+[sub_resource type="Resource" id="Resource_sxwmd"]
+script = ExtResource("4_lyebm")
+name = "q7-45"
+audio_stream = ExtResource("6_eme83")
+time = 0.0
+vol = 1.0
+group = "7-45"
+queueable = false
+allow_dupes = false
+
+[sub_resource type="Resource" id="Resource_fdd60"]
+script = ExtResource("4_lyebm")
+name = "q8-15"
+audio_stream = ExtResource("7_ubhnp")
+time = 0.0
+vol = 1.0
+group = "8-15"
+queueable = false
+allow_dupes = false
+
+[sub_resource type="Resource" id="Resource_h3eh8"]
+script = ExtResource("4_lyebm")
+name = "q7-15-nowhite"
+audio_stream = ExtResource("8_ssnys")
+time = 0.0
+vol = 1.0
+group = "end"
+queueable = false
+allow_dupes = false
+
+[sub_resource type="Resource" id="Resource_rwybc"]
+script = ExtResource("9_f538g")
+state_name = "stage1"
+groups = Array[String](["6-45"])
+add_only = false
+
+[sub_resource type="Resource" id="Resource_e42wo"]
+script = ExtResource("9_f538g")
+state_name = "stage2"
+groups = Array[String](["6-45", "7-15"])
+add_only = false
+
+[sub_resource type="Resource" id="Resource_ilogx"]
+script = ExtResource("9_f538g")
+state_name = "stage3"
+groups = Array[String](["6-45", "7-15", "7-45"])
+add_only = false
+
+[sub_resource type="Resource" id="Resource_valwd"]
+script = ExtResource("9_f538g")
+state_name = "stage4"
+groups = Array[String](["6-45", "7-15", "7-45", "8-15"])
+add_only = false
+
+[sub_resource type="Resource" id="Resource_r71jy"]
+script = ExtResource("9_f538g")
+state_name = "end"
+groups = Array[String](["end"])
+add_only = false
+
+[resource]
+script = ExtResource("2_wwwci")
+playlist_name = "quake"
+streams = Array[ExtResource("4_lyebm")]([SubResource("Resource_i74m2"), SubResource("Resource_t8o4w"), SubResource("Resource_sxwmd"), SubResource("Resource_fdd60"), SubResource("Resource_h3eh8")])
+end_time = 0.0
+loop = true
+loop_offset = 0.0
+vertical_states = Array[ExtResource("9_f538g")]([SubResource("Resource_rwybc"), SubResource("Resource_e42wo"), SubResource("Resource_ilogx"), SubResource("Resource_valwd"), SubResource("Resource_r71jy")])
+fade_length = 3.55
+sections = Array[Resource("res://Legadot/data_containers/LdSectionData.gd")]([])
+transitions = Array[Resource("res://Legadot/data_containers/LdTransitionData.gd")]([])
+bpm_times = Array[ExtResource("1_ta24g")]([SubResource("Resource_lu3cj")])
+count_subdivision = 1
+events = Array[Resource("res://Legadot/data_containers/LdEventData.gd")]([])
+default_v_state = "stage1"
+default_h_state = ""
