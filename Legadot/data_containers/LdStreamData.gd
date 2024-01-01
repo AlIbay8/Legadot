@@ -12,24 +12,44 @@ class_name LdStream
 @export var allow_dupes: bool = false
 
 var player: AudioStreamPlayer
+var playback_stream: AudioStreamPlaybackPolyphonic
+var playback_id: int
+var queueable_ids: Array[int]
 var timer: Timer
 var max_vol: float
+var volume_db: float:
+	set(db):
+		if playback_stream:
+			if not allow_dupes:
+				if playback_stream.is_stream_playing(playback_id):
+					playback_stream.set_stream_volume(playback_id, db)
+			else:
+				for id in queueable_ids:
+					if playback_stream.is_stream_playing(id):
+						playback_stream.set_stream_volume(id, db)
+					else:
+						queueable_ids.erase(id)
+		volume_db = db
 var connected: float
 var variant_i: int
 
 func play(from_position: float = 0.0):
-	if queueable:
-		if not player.playing:
-			player.play()
-		elif not allow_dupes:
-			player.play()
-		var playback: AudioStreamPlayback = player.get_stream_playback()
-		if not playback:
-			player.stream = AudioStreamPolyphonic.new()
-			playback = player.get_stream_playback()
-	
-		if playback is AudioStreamPlaybackPolyphonic:
-			playback.play_stream(audio_stream,from_position)
-	else:
-		player.play(from_position)
-	
+	if playback_stream:
+		if queueable and allow_dupes:
+			queueable_ids.append(playback_stream.play_stream(audio_stream,from_position,volume_db))
+		else:
+#			if playback_stream.is_stream_playing(playback_id): 
+#				playback_stream.stop_stream(playback_id)
+			playback_id = playback_stream.play_stream(audio_stream,from_position,volume_db)
+
+func stop():
+	if playback_stream:
+		if queueable and allow_dupes:
+			for id in queueable_ids:
+				if playback_stream.is_stream_playing(id):
+					playback_stream.stop_stream(id)
+			queueable_ids.clear()
+		else:
+			if playback_stream.is_stream_playing(playback_id):
+				print("Stop stream")
+				playback_stream.stop_stream(playback_id)

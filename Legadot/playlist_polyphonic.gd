@@ -1,10 +1,11 @@
-extends Node2D
-class_name LdPlaylistPolyphonic
+extends AudioStreamPlayer
+class_name LdPlaylist
 
 @export var playlist_data: LdPlaylistData
 
-@export var stream_players: Node2D
-@export var timers: Node2D
+#@export var stream_players: Node
+var playback: AudioStreamPlaybackPolyphonic
+@export var timers: Node
 
 var stream_data: Dictionary = {}
 var groups: Dictionary = {}
@@ -44,8 +45,6 @@ var playlist_vol: float = 1.0
 
 var tracker_timer: Timer
 var longest_time: float = 0.0
-var active_timers: int = 0
-var active_players: int = 0
 
 signal measure(beat_pos: float)
 signal quarter_beat(beat_pos: float)
@@ -65,6 +64,9 @@ func _ready():
 	init_playlist()
 
 func init_playlist():
+	if self.stream is AudioStreamPolyphonic:
+		self.play()
+		playback = self.get_stream_playback()
 	if playlist_data:
 		build_data()
 		build_groups()
@@ -89,47 +91,48 @@ func init_playlist():
 		else:
 			if not Engine.is_editor_hint():
 				if auto_start and OS.get_name()!="Web":
-					play(-1)
+					play_ld(-1)
 			else:
-				stop()
+				stop_ld()
 
 func build_data():
-	for stream in playlist_data.streams:
-		add_stream(stream)
+	for ld_stream in playlist_data.streams:
+		add_stream(ld_stream)
 
-func add_stream(stream: LdStream):
-	if stream.name != "":
-		var player: AudioStreamPlayer = AudioStreamPlayer.new()
-		player.stream = AudioStreamPolyphonic.new() if stream.allow_dupes else stream.audio_stream
-		player.set_bus("Music")
+func add_stream(ld_stream: LdStream):
+	if ld_stream.name != "":
+#		var player: AudioStreamPlayer = AudioStreamPlayer.new()
+#		player.stream = AudioStreamPolyphonic.new() if stream.allow_dupes else stream.audio_stream
+#		player.set_bus("Music")
 		
-		stream.player = player
-		stream.max_vol = stream.vol
-		stream_data[stream.name] = stream
-		check_longest_time(stream.time, stream.audio_stream)
+#		stream.player = player
+		ld_stream.playback_stream = playback
+		ld_stream.max_vol = ld_stream.vol
+		stream_data[ld_stream.name] = ld_stream
+		check_longest_time(ld_stream.time, ld_stream.audio_stream)
 		
-		stream_players.add_child(player)
+#		stream_players.add_child(player)
 
-func check_longest_time(time: float, stream: AudioStream):
+func check_longest_time(time: float, audio_stream: AudioStream):
 	var stream_length: float = 0.0
-	if stream is AudioStreamRandomizer:
-		for i in range(stream.streams_count):
-			if stream.get_stream(i).get_length()>stream_length:
-				stream_length = stream.get_stream(i).get_length()
+	if audio_stream is AudioStreamRandomizer:
+		for i in range(audio_stream.streams_count):
+			if audio_stream.get_stream(i).get_length()>stream_length:
+				stream_length = audio_stream.get_stream(i).get_length()
 	else:
-		stream_length = stream.get_length()
+		stream_length = audio_stream.get_length()
 	if time+stream_length>longest_time:
 		longest_time = time+stream_length
 	
 func build_groups():
 	for s in stream_data:
-		var stream = stream_data[s]
-		if not (stream.group in self.groups):
-			self.groups[stream.group] = {
+		var ld_stream = stream_data[s]
+		if not (ld_stream.group in self.groups):
+			self.groups[ld_stream.group] = {
 				"streams": [],
 				"vol": 1.0
 			}
-		groups[stream.group].streams.append(stream)
+		groups[ld_stream.group].streams.append(ld_stream)
 
 func build_timeline():
 	for s in stream_data:
@@ -202,14 +205,15 @@ func build_bpm():
 	bpm_times.reverse()
 	
 # Basic song functions
-func play(from: float = 0.0):
+func play_ld(from: float = 0.0):
+	if not playback:
+		self.stop()
+		self.stream = AudioStreamPolyphonic.new()
 	if is_playing:
-		stop(true)
+		stop_ld(true)
 	is_playing = true
 	start_position = from
 	total_measures=0
-	active_players=0
-	active_timers=0
 	var time_keys = timeline.keys()
 	time_keys.sort()
 	for time in time_keys:
@@ -219,7 +223,6 @@ func play(from: float = 0.0):
 				if not tracker_timer or timeline[time].timer.wait_time>tracker_timer.wait_time:
 					tracker_timer = timeline[time].timer
 				timeline[time].timer.start()
-				self.active_timers+=1
 			else:
 				timeline[time].trigger_event(self, abs(from-time), false)
 			continue
@@ -229,59 +232,61 @@ func play(from: float = 0.0):
 func play_from_sect(sect: String):
 	if sect in h_sections:
 		if not Engine.is_editor_hint():
-			play(h_sections[sect])
+			play_ld(h_sections[sect])
 
-func stop(seek_stop: bool = false):
+func stop_ld(seek_stop: bool = false):
 	sec_position = 0
 	is_playing = false
 	for timer in timers.get_children():
 		timer.stop()
 	for s in stream_data:
-		var stream = stream_data[s]
-		if stream.queueable and seek_stop: continue
-		if stream.player.playing:
-			stream.player.playing = false
+		var ld_stream = stream_data[s]
+		if ld_stream.queueable and seek_stop: continue
+		if playback:
+			ld_stream.stop()
+#		if stream.player.playing:
+#			stream.player.playing = false
 
-func seek(to: float):
-	play(to)
+func seek_ld(to: float):
+	play_ld(to)
 
 # Fade functions
-func fade_stream(vol_linear, stream: String, fade_override: float = -1.0):
-	if stream in stream_data:
+func fade_stream(vol_linear, ld_stream: String, fade_override: float = -1.0):
+	if ld_stream in stream_data:
 		var stream_tween = create_tween()
 		stream_tween.set_parallel(true)
 		
-		stream_tween.tween_method(interpolate_vol.bind(stream_data[stream], 0), stream_data[stream].vol, vol_linear, playlist_data.fade_length if fade_override<0.0 else fade_override)
+		stream_tween.tween_method(interpolate_vol.bind(stream_data[ld_stream], 0), stream_data[ld_stream].vol, vol_linear, playlist_data.fade_length if fade_override<0.0 else fade_override)
 
 func fade_group(vol_linear: float, group: String, fade_override: float = -1.0):
 	if group in groups and group!="":
 		var group_tween = create_tween()
 		group_tween.set_parallel(true)
 	
-		for stream in groups[group].streams:
-			group_tween.tween_method(interpolate_vol.bind(stream, 1), groups[group].vol, vol_linear, playlist_data.fade_length if fade_override<0.0 else fade_override)
+		for ld_stream in groups[group].streams:
+			group_tween.tween_method(interpolate_vol.bind(ld_stream, 1), groups[group].vol, vol_linear, playlist_data.fade_length if fade_override<0.0 else fade_override)
 
 func fade_playlist(vol_linear: float, stop_audio: bool = false, fade_override: float = -1.0):
 	if stream_data.is_empty(): return
 	var playlist_tween = create_tween()
 	playlist_tween.set_parallel(true)
 	
-	for stream in stream_data:
-		playlist_tween.tween_method(interpolate_vol.bind(stream_data[stream],2),playlist_vol,vol_linear,playlist_data.fade_length if fade_override<0.0 else fade_override)
+	for ld_stream in stream_data:
+		playlist_tween.tween_method(interpolate_vol.bind(stream_data[ld_stream],2),playlist_vol,vol_linear,playlist_data.fade_length if fade_override<0.0 else fade_override)
 	await playlist_tween.finished
 	if stop_audio and playlist_vol<=0.0:
-		stop()
+		stop_ld()
 
-func interpolate_vol(vol_linear: float, stream: LdStream, type: int):
+func interpolate_vol(vol_linear: float, ld_stream: LdStream, type: int):
 	match type:
 		0:
-			stream.vol = vol_linear
+			ld_stream.vol = vol_linear
 		1:
-			groups[stream.group].vol = vol_linear
+			groups[ld_stream.group].vol = vol_linear
 		2: 
 			playlist_vol = vol_linear
-	var new_vol: float = stream.vol*groups[stream.group].vol*playlist_vol
-	stream.player.volume_db = linear_to_db(new_vol)
+	var new_vol: float = ld_stream.vol*groups[ld_stream.group].vol*playlist_vol
+	ld_stream.volume_db = linear_to_db(new_vol)
 
 # Vertical Remixing
 func set_v_state(new_state: String, fade_override: float = -1.0):
@@ -307,10 +312,10 @@ func check_h_transition(transition: LdTransition) -> bool:
 	for dest in transition.destinations:
 		if h_state == dest:
 			if dest in h_sections:
-				seek(h_sections[dest])
+				seek_ld(h_sections[dest])
 				return true
 	if transition.loop:
-		seek(h_sections[transition.destinations[-1]])
+		seek_ld(h_sections[transition.destinations[-1]])
 		return true
 	return false
 
@@ -356,9 +361,9 @@ func get_beats_since_sect(time: float) -> float:
 			return beats
 	return 0
 
-func play_queueable(stream: String, wait_for_beat: float = 1.0):
-	if stream in stream_data and is_playing:
-		var queueable = stream_data[stream]
+func play_queueable(ld_stream: String, wait_for_beat: float = 1.0):
+	if ld_stream in stream_data and is_playing:
+		var queueable = stream_data[ld_stream]
 		
 		if queueable.connected == wait_for_beat: return
 		match wait_for_beat:
@@ -424,16 +429,16 @@ func wait_for_event(event: String) -> bool:
 
 func check_end(time_check: float):
 	if time_check==playlist_data.end_time:
-		stop()
+		stop_ld()
 		self.playlist_finished.emit()
 		if playlist_data.loop:
-			play(playlist_data.loop_offset)
+			play_ld(playlist_data.loop_offset)
 
-func _on_button_pressed():
-	play(0.0)
+func _on_play_button_pressed():
+	play_ld(0.0)
 
 func _on_stop_button_pressed():
-	stop()
+	stop_ld()
 	
 func prepare_debug():
 	init_vertical()
@@ -471,3 +476,6 @@ func _on_vertical_option_item_selected(index):
 
 func _on_horizontal_option_item_selected(index):
 	set_h_state(horizontal_btn.get_item_text(index))
+
+
+

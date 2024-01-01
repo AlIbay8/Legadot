@@ -29,7 +29,6 @@ func trigger_event(playlist: LdPlaylist, offset: float = -1.0, check_end: bool =
 		playlist.current_beats_in_measure = bpm.beats_in_measure
 		playlist.current_beat_value = bpm.beat_value
 	for s in streams:
-		playlist.active_players+=1
 		s.play(offset)
 	
 	if check_end:
