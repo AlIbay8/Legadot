@@ -1,120 +1,7 @@
-[gd_scene load_steps=25 format=3 uid="uid://dxq2ex6wdqc1m"]
+[gd_scene load_steps=5 format=3 uid="uid://dxq2ex6wdqc1m"]
 
 [ext_resource type="Script" path="res://Legadot/playlist.gd" id="1_j71pu"]
-[ext_resource type="Script" path="res://Legadot/data_containers/LdBpmData.gd" id="2_4a3ja"]
-[ext_resource type="Script" path="res://Legadot/data_containers/LdPlaylistData.gd" id="2_x5djy"]
-[ext_resource type="AudioStream" uid="uid://btnbhbnpuxpjt" path="res://eighth-hour/quake-6-45-new.wav" id="3_tk4j2"]
-[ext_resource type="Script" path="res://Legadot/data_containers/LdStreamData.gd" id="4_usaq3"]
-[ext_resource type="AudioStream" uid="uid://bp4o2ccnfg620" path="res://eighth-hour/quake-7-15-new.wav" id="5_tok3t"]
-[ext_resource type="AudioStream" uid="uid://0vnqhdumy505" path="res://eighth-hour/quake-7-45.wav" id="6_mapku"]
-[ext_resource type="AudioStream" uid="uid://cdn85ml2k7ngw" path="res://eighth-hour/quake-8-15.wav" id="7_nbawr"]
-[ext_resource type="AudioStream" uid="uid://djil48jn2f6xr" path="res://eighth-hour/quake-7-15-nowhite.wav" id="8_twr4r"]
-[ext_resource type="Script" path="res://Legadot/data_containers/LdVerticalStateData.gd" id="10_wh1wo"]
-
-[sub_resource type="Resource" id="Resource_lu3cj"]
-script = ExtResource("2_4a3ja")
-time = 0.0
-bpm = 120.0
-constant = true
-beats_in_measure = 4
-beat_value = 4
-
-[sub_resource type="Resource" id="Resource_i74m2"]
-script = ExtResource("4_usaq3")
-name = "q6-45"
-audio_stream = ExtResource("3_tk4j2")
-time = 0.0
-vol = 1.0
-group = "6-45"
-queueable = false
-allow_dupes = false
-
-[sub_resource type="Resource" id="Resource_t8o4w"]
-script = ExtResource("4_usaq3")
-name = "q7-15"
-audio_stream = ExtResource("5_tok3t")
-time = 0.0
-vol = 1.0
-group = "7-15"
-queueable = false
-allow_dupes = false
-
-[sub_resource type="Resource" id="Resource_sxwmd"]
-script = ExtResource("4_usaq3")
-name = "q7-45"
-audio_stream = ExtResource("6_mapku")
-time = 0.0
-vol = 1.0
-group = "7-45"
-queueable = false
-allow_dupes = false
-
-[sub_resource type="Resource" id="Resource_fdd60"]
-script = ExtResource("4_usaq3")
-name = "q8-15"
-audio_stream = ExtResource("7_nbawr")
-time = 0.0
-vol = 1.0
-group = "8-15"
-queueable = false
-allow_dupes = false
-
-[sub_resource type="Resource" id="Resource_h3eh8"]
-script = ExtResource("4_usaq3")
-name = "q7-15-nowhite"
-audio_stream = ExtResource("8_twr4r")
-time = 0.0
-vol = 1.0
-group = "end"
-queueable = false
-allow_dupes = false
-
-[sub_resource type="Resource" id="Resource_rwybc"]
-script = ExtResource("10_wh1wo")
-state_name = "stage1"
-groups = Array[String](["6-45"])
-add_only = false
-
-[sub_resource type="Resource" id="Resource_e42wo"]
-script = ExtResource("10_wh1wo")
-state_name = "stage2"
-groups = Array[String](["6-45", "7-15"])
-add_only = false
-
-[sub_resource type="Resource" id="Resource_ilogx"]
-script = ExtResource("10_wh1wo")
-state_name = "stage3"
-groups = Array[String](["6-45", "7-15", "7-45"])
-add_only = false
-
-[sub_resource type="Resource" id="Resource_valwd"]
-script = ExtResource("10_wh1wo")
-state_name = "stage4"
-groups = Array[String](["6-45", "7-15", "7-45", "8-15"])
-add_only = false
-
-[sub_resource type="Resource" id="Resource_r71jy"]
-script = ExtResource("10_wh1wo")
-state_name = "end"
-groups = Array[String](["end"])
-add_only = false
-
-[sub_resource type="Resource" id="Resource_sxc7d"]
-script = ExtResource("2_x5djy")
-playlist_name = "quake"
-streams = Array[ExtResource("4_usaq3")]([SubResource("Resource_i74m2"), SubResource("Resource_t8o4w"), SubResource("Resource_sxwmd"), SubResource("Resource_fdd60"), SubResource("Resource_h3eh8")])
-end_time = 0.0
-loop = true
-loop_offset = 0.0
-vertical_states = Array[ExtResource("10_wh1wo")]([SubResource("Resource_rwybc"), SubResource("Resource_e42wo"), SubResource("Resource_ilogx"), SubResource("Resource_valwd"), SubResource("Resource_r71jy")])
-fade_length = 3.55
-sections = Array[Resource("res://Legadot/data_containers/LdSectionData.gd")]([])
-transitions = Array[Resource("res://Legadot/data_containers/LdTransitionData.gd")]([])
-bpm_times = Array[ExtResource("2_4a3ja")]([SubResource("Resource_lu3cj")])
-count_subdivision = 1
-events = Array[Resource("res://Legadot/data_containers/LdEventData.gd")]([])
-default_v_state = "stage1"
-default_h_state = ""
+[ext_resource type="Resource" uid="uid://busknx7fgmyl1" path="res://quake_playlist.tres" id="2_0b4vn"]
 
 [sub_resource type="Theme" id="Theme_2guc0"]
 default_font_size = 30
@@ -124,7 +11,7 @@ font_size = 36
 
 [node name="Playlist" type="Node2D" node_paths=PackedStringArray("stream_players", "timers", "debug_label", "vertical_btn", "horizontal_btn", "queueables_list", "beat_label")]
 script = ExtResource("1_j71pu")
-playlist_data = SubResource("Resource_sxc7d")
+playlist_data = ExtResource("2_0b4vn")
 stream_players = NodePath("StreamPlayers")
 timers = NodePath("Timers")
 auto_start = true
