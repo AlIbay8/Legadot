@@ -1,10 +1,10 @@
 extends Node2D
-class_name LdPlaylist
+class_name LdStreamPlayer
 
 @export var playlist_data: LdPlaylistData
 
-@export var stream_players: Node2D
-@export var timers: Node2D
+@export var stream_players: Node
+@export var timers: Node
 
 var stream_data: Dictionary = {}
 var groups: Dictionary = {}

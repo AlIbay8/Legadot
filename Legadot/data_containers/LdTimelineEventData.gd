@@ -12,7 +12,7 @@ class_name LdTimelineEvent
 func _init(event_time: float=0.0):
 	self.time = event_time
 
-func trigger_event(playlist: LdPlaylist, offset: float = -1.0, check_end: bool = true):
+func trigger_event(playlist: LdStreamPlayer, offset: float = -1.0, check_end: bool = true):
 	if offset<0.0:
 		offset = 0.0
 		if transition:

@@ -33,3 +33,6 @@ func play(from_position: float = 0.0):
 	else:
 		player.play(from_position)
 	
+func set_player_property(property: String, value: Variant):
+	if player:
+		player.set(property, value)

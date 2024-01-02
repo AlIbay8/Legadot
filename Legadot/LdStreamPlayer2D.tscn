@@ -1,0 +1,95 @@
+[gd_scene load_steps=5 format=3 uid="uid://d2wsppiun6f1a"]
+
+[ext_resource type="Script" path="res://Legadot/LdStreamPlayer2D.gd" id="1_11h7f"]
+[ext_resource type="Resource" uid="uid://busknx7fgmyl1" path="res://quake_playlist.tres" id="2_m6qof"]
+
+[sub_resource type="Theme" id="Theme_2guc0"]
+default_font_size = 30
+
+[sub_resource type="LabelSettings" id="LabelSettings_v5mwe"]
+font_size = 36
+
+[node name="LdStreamPlayer2D" type="Node2D" node_paths=PackedStringArray("stream_players", "timers", "debug_label", "vertical_btn", "horizontal_btn", "queueables_list", "beat_label")]
+script = ExtResource("1_11h7f")
+playlist_data = ExtResource("2_m6qof")
+stream_players = NodePath("StreamPlayers")
+timers = NodePath("Timers")
+auto_start = true
+debug_label = NodePath("DebugMenu/MarginContainer/VBoxContainer/DebugLabel")
+vertical_btn = NodePath("DebugMenu/MarginContainer/VBoxContainer/VerticalHorizontalControlsContainter/VerticalOption")
+horizontal_btn = NodePath("DebugMenu/MarginContainer/VBoxContainer/VerticalHorizontalControlsContainter/HorizontalOption")
+queueables_list = NodePath("DebugMenu/MarginContainer/VBoxContainer/QueuablesContainer")
+beat_label = NodePath("DebugMenu/MarginContainer/VBoxContainer/BeatLabel")
+
+[node name="StreamPlayers" type="Node2D" parent="."]
+
+[node name="Timers" type="Node" parent="."]
+
+[node name="DebugMenu" type="Control" parent="."]
+layout_mode = 3
+anchors_preset = 0
+offset_right = 879.0
+offset_bottom = 477.0
+size_flags_horizontal = 3
+size_flags_vertical = 3
+theme = SubResource("Theme_2guc0")
+
+[node name="MarginContainer" type="MarginContainer" parent="DebugMenu"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/margin_left = 20
+theme_override_constants/margin_top = 20
+theme_override_constants/margin_right = 20
+theme_override_constants/margin_bottom = 20
+
+[node name="VBoxContainer" type="VBoxContainer" parent="DebugMenu/MarginContainer"]
+layout_mode = 2
+
+[node name="DebugLabel" type="Label" parent="DebugMenu/MarginContainer/VBoxContainer"]
+layout_mode = 2
+text = "tutorial, 27"
+label_settings = SubResource("LabelSettings_v5mwe")
+
+[node name="SongControls" type="HBoxContainer" parent="DebugMenu/MarginContainer/VBoxContainer"]
+layout_mode = 2
+
+[node name="PlayButton" type="Button" parent="DebugMenu/MarginContainer/VBoxContainer/SongControls"]
+layout_mode = 2
+text = "Play"
+
+[node name="StopButton" type="Button" parent="DebugMenu/MarginContainer/VBoxContainer/SongControls"]
+layout_mode = 2
+text = "Stop"
+
+[node name="VerticalHorizontalControlsContainter" type="HBoxContainer" parent="DebugMenu/MarginContainer/VBoxContainer"]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="DebugMenu/MarginContainer/VBoxContainer/VerticalHorizontalControlsContainter"]
+layout_mode = 2
+text = "V State:"
+
+[node name="VerticalOption" type="OptionButton" parent="DebugMenu/MarginContainer/VBoxContainer/VerticalHorizontalControlsContainter"]
+layout_mode = 2
+allow_reselect = true
+
+[node name="Label2" type="Label" parent="DebugMenu/MarginContainer/VBoxContainer/VerticalHorizontalControlsContainter"]
+layout_mode = 2
+text = "H State:"
+
+[node name="HorizontalOption" type="OptionButton" parent="DebugMenu/MarginContainer/VBoxContainer/VerticalHorizontalControlsContainter"]
+layout_mode = 2
+
+[node name="QueuablesContainer" type="HBoxContainer" parent="DebugMenu/MarginContainer/VBoxContainer"]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="DebugMenu/MarginContainer/VBoxContainer/QueuablesContainer"]
+layout_mode = 2
+text = "Queueables: "
+
+[node name="BeatLabel" type="Label" parent="DebugMenu/MarginContainer/VBoxContainer"]
+layout_mode = 2
+text = "Measure, Beat, Time Signature: 7, 3, 4/4"
