@@ -27,6 +27,7 @@ var current_section: String = "":
 var current_beats_in_measure: int = 4
 var current_beat_value: int = 4
 var total_measures: int = 0
+var coroutine_password: float = 0.0
 
 var playlist_vol: float = 1.0
 
@@ -86,12 +87,12 @@ func init_playlist():
 		
 		if playlist_data.default_h_state!="":
 			h_state = playlist_data.default_h_state
-			await get_tree().create_timer(1.0).timeout
+			await get_tree().create_timer(0.25).timeout
 			set_h_state(playlist_data.default_h_state, auto_start)
 		else:
 			if not Engine.is_editor_hint():
 				if auto_start and OS.get_name()!="Web":
-					play(-1)
+					play(-0.25)
 			else:
 				stop()
 
@@ -241,8 +242,8 @@ func play_from_sect(sect: String):
 		if not Engine.is_editor_hint():
 			play(h_sections[sect])
 
-func stop(seek_stop: bool = false):
-	sec_position = 0
+func stop(seek_stop: bool = false, reset_pos: bool = true):
+	if reset_pos: sec_position = 0
 	is_playing = false
 	for timer in timers.get_children():
 		timer.stop()
@@ -251,6 +252,12 @@ func stop(seek_stop: bool = false):
 		if stream.queueable and seek_stop: continue
 		if stream.player.playing:
 			stream.player.playing = false
+
+func pause():
+	stop(false, false)
+
+func resume():
+	play(sec_position)
 
 func seek(to: float):
 	play(to)
@@ -438,7 +445,9 @@ func check_end(time_check: float):
 		self.playlist_finished.emit()
 		if playlist_data.loop:
 			play(playlist_data.loop_offset)
-	
+
+
+
 func prepare_debug():
 	play_button.pressed.connect(_on_play_button_pressed)
 	stop_button.pressed.connect(_on_stop_button_pressed)

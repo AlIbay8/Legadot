@@ -9,17 +9,12 @@ default_font_size = 30
 [sub_resource type="LabelSettings" id="LabelSettings_v5mwe"]
 font_size = 36
 
-[node name="LdStreamPlayer2D" type="Node2D" node_paths=PackedStringArray("stream_players", "timers", "debug_label", "vertical_btn", "horizontal_btn", "queueables_list", "beat_label")]
+[node name="LdStreamPlayer2D" type="Node2D" node_paths=PackedStringArray("stream_players", "timers")]
 script = ExtResource("1_11h7f")
 playlist_data = ExtResource("2_m6qof")
 stream_players = NodePath("StreamPlayers")
 timers = NodePath("Timers")
 auto_start = true
-debug_label = NodePath("DebugMenu/MarginContainer/VBoxContainer/DebugLabel")
-vertical_btn = NodePath("DebugMenu/MarginContainer/VBoxContainer/VerticalHorizontalControlsContainter/VerticalOption")
-horizontal_btn = NodePath("DebugMenu/MarginContainer/VBoxContainer/VerticalHorizontalControlsContainter/HorizontalOption")
-queueables_list = NodePath("DebugMenu/MarginContainer/VBoxContainer/QueuablesContainer")
-beat_label = NodePath("DebugMenu/MarginContainer/VBoxContainer/BeatLabel")
 
 [node name="StreamPlayers" type="Node2D" parent="."]
 

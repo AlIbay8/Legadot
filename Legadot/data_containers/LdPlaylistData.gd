@@ -23,6 +23,9 @@ class_name LdPlaylistData
 @export_group("Events")
 @export var events: Array[LdEvent]
 
+@export_group("Action Sets")
+@export var action_sets: Array
+
 @export_group("Defaults")
 @export var default_v_state: String
 @export var default_h_state: String

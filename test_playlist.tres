@@ -237,5 +237,6 @@ transitions = Array[ExtResource("8_rhamt")]([SubResource("Resource_xi1j8"), SubR
 bpm_times = Array[ExtResource("1_sevuw")]([SubResource("Resource_u02sm")])
 count_subdivision = 1
 events = Array[Resource("res://Legadot/data_containers/LdEventData.gd")]([])
+action_sets = []
 default_v_state = "main"
 default_h_state = "tutorial"
