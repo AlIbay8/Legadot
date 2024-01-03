@@ -1,4 +1,4 @@
-extends Node2D
+extends Node
 class_name LdStreamPlayer
 
 @export var playlist_data: LdPlaylistData
@@ -54,12 +54,14 @@ signal section(sect: String)
 signal event_reached(event: String)
 signal playlist_finished()
 
-@export_category("Debug")
-@export var debug_label: Label
-@export var vertical_btn: OptionButton
-@export var horizontal_btn: OptionButton
-@export var queueables_list: HBoxContainer
-@export var beat_label: Label
+#@export_category("Debug")
+@onready var debug_label = $DebugMenu/MarginContainer/VBoxContainer/DebugLabel
+@onready var play_button = $DebugMenu/MarginContainer/VBoxContainer/SongControls/PlayButton
+@onready var stop_button = $DebugMenu/MarginContainer/VBoxContainer/SongControls/StopButton
+@onready var vertical_option = $DebugMenu/MarginContainer/VBoxContainer/VerticalHorizontalControlsContainter/VerticalOption
+@onready var horizontal_option = $DebugMenu/MarginContainer/VBoxContainer/VerticalHorizontalControlsContainter/HorizontalOption
+@onready var beat_label = $DebugMenu/MarginContainer/VBoxContainer/BeatLabel
+@onready var queueables_container = $DebugMenu/MarginContainer/VBoxContainer/QueueablesContainer
 
 func _ready():
 	init_playlist()
@@ -98,10 +100,10 @@ func build_data():
 		add_stream(stream)
 
 func add_stream(stream: LdStream):
+	var player_template = get_player_template()
 	if stream.name != "":
-		var player: AudioStreamPlayer = AudioStreamPlayer.new()
+		var player = player_template.duplicate()
 		player.stream = AudioStreamPolyphonic.new() if stream.allow_dupes else stream.audio_stream
-		player.set_bus("Music")
 		
 		stream.player = player
 		stream.max_vol = stream.vol
@@ -109,6 +111,14 @@ func add_stream(stream: LdStream):
 		check_longest_time(stream.time, stream.audio_stream)
 		
 		stream_players.add_child(player)
+
+func get_player_template():
+	var player_node: AudioStreamPlayer = AudioStreamPlayer.new()
+	for child in self.get_children():
+		if child is AudioStreamPlayer:
+			player_node = child.duplicate()
+			break
+	return player_node
 
 func check_longest_time(time: float, stream: AudioStream):
 	var stream_length: float = 0.0
@@ -428,34 +438,32 @@ func check_end(time_check: float):
 		self.playlist_finished.emit()
 		if playlist_data.loop:
 			play(playlist_data.loop_offset)
-
-func _on_button_pressed():
-	play(0.0)
-
-func _on_stop_button_pressed():
-	stop()
 	
 func prepare_debug():
+	play_button.pressed.connect(_on_play_button_pressed)
+	stop_button.pressed.connect(_on_stop_button_pressed)
+	vertical_option.item_selected.connect(_on_vertical_option_item_selected)
+	horizontal_option.item_selected.connect(_on_horizontal_option_item_selected)
 	init_vertical()
 	init_horizontal()
 	init_queueables()
 
 func init_vertical():
-	vertical_btn.clear()
+	vertical_option.clear()
 	var i: int = 0
 	for v in v_states:
-		vertical_btn.add_item(v)
+		vertical_option.add_item(v)
 		if v==v_state:
-			vertical_btn.select(i)
+			vertical_option.select(i)
 		i+=1
 
 func init_horizontal():
-	horizontal_btn.clear()
+	horizontal_option.clear()
 	var i: int = 0
 	for h in h_sections:
-		horizontal_btn.add_item(h)
+		horizontal_option.add_item(h)
 		if h==h_state:
-			horizontal_btn.select(i)
+			horizontal_option.select(i)
 		i+=1
 
 func init_queueables():
@@ -463,11 +471,17 @@ func init_queueables():
 		if stream_data[s].queueable:
 			var btn: Button = Button.new()
 			btn.text = s
-			queueables_list.add_child(btn)
+			queueables_container.add_child(btn)
 			btn.pressed.connect(play_queueable.bind(s, 1.0))
 
+func _on_play_button_pressed():
+	play(0.0)
+
+func _on_stop_button_pressed():
+	stop()
+
 func _on_vertical_option_item_selected(index):
-	set_v_state(vertical_btn.get_item_text(index))
+	set_v_state(vertical_option.get_item_text(index))
 
 func _on_horizontal_option_item_selected(index):
-	set_h_state(horizontal_btn.get_item_text(index))
+	set_h_state(horizontal_option.get_item_text(index))

@@ -11,7 +11,7 @@ class_name LdStream
 @export var queueable: bool = false
 @export var allow_dupes: bool = false
 
-var player: AudioStreamPlayer
+var player
 var timer: Timer
 var max_vol: float
 var connected: float
