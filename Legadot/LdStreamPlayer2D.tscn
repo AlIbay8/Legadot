@@ -78,12 +78,19 @@ text = "H State:"
 [node name="HorizontalOption" type="OptionButton" parent="DebugMenu/MarginContainer/VBoxContainer/VerticalHorizontalControlsContainter"]
 layout_mode = 2
 
-[node name="QueuablesContainer" type="HBoxContainer" parent="DebugMenu/MarginContainer/VBoxContainer"]
+[node name="QueueablesContainer" type="HBoxContainer" parent="DebugMenu/MarginContainer/VBoxContainer"]
 layout_mode = 2
 
-[node name="Label" type="Label" parent="DebugMenu/MarginContainer/VBoxContainer/QueuablesContainer"]
+[node name="Label" type="Label" parent="DebugMenu/MarginContainer/VBoxContainer/QueueablesContainer"]
 layout_mode = 2
 text = "Queueables: "
+
+[node name="ActionsContainer" type="HBoxContainer" parent="DebugMenu/MarginContainer/VBoxContainer"]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="DebugMenu/MarginContainer/VBoxContainer/ActionsContainer"]
+layout_mode = 2
+text = "Actions: "
 
 [node name="BeatLabel" type="Label" parent="DebugMenu/MarginContainer/VBoxContainer"]
 layout_mode = 2

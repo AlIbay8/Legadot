@@ -14,7 +14,7 @@ class_name LdStream
 var player
 var timer: Timer
 var max_vol: float
-var connected: float
+var connected: float = -1.0
 var variant_i: int
 
 func play(from_position: float = 0.0):
@@ -32,7 +32,3 @@ func play(from_position: float = 0.0):
 			playback.play_stream(audio_stream,from_position)
 	else:
 		player.play(from_position)
-	
-func set_player_property(property: String, value: Variant):
-	if player:
-		player.set(property, value)

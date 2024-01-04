@@ -14,6 +14,7 @@ var h_sections: Dictionary = {}
 var bpms: Dictionary = {}
 var bpm_times: Array
 var event_names: Array
+var action_sets: Dictionary = {}
 
 var is_playing: bool = false
 var start_position: float = 0.0
@@ -63,6 +64,7 @@ signal playlist_finished()
 @onready var horizontal_option = $DebugMenu/MarginContainer/VBoxContainer/VerticalHorizontalControlsContainter/HorizontalOption
 @onready var beat_label = $DebugMenu/MarginContainer/VBoxContainer/BeatLabel
 @onready var queueables_container = $DebugMenu/MarginContainer/VBoxContainer/QueueablesContainer
+@onready var actions_container = $DebugMenu/MarginContainer/VBoxContainer/ActionsContainer
 
 func _ready():
 	init_playlist()
@@ -76,6 +78,7 @@ func init_playlist():
 		build_v_states()
 		build_h_sections()
 		build_bpm()
+		build_action_sets()
 		
 		prepare_debug()
 		
@@ -212,6 +215,10 @@ func build_bpm():
 	bpm_times.sort()
 	bpm_times.reverse()
 	
+func build_action_sets():
+	for action_set in playlist_data.action_sets:
+		action_sets[action_set.action_set_name] = action_set
+
 # Basic song functions
 func play(from: float = 0.0):
 	if is_playing:
@@ -269,6 +276,8 @@ func fade_stream(vol_linear, stream: String, fade_override: float = -1.0):
 		stream_tween.set_parallel(true)
 		
 		stream_tween.tween_method(interpolate_vol.bind(stream_data[stream], 0), stream_data[stream].vol, vol_linear, playlist_data.fade_length if fade_override<0.0 else fade_override)
+		await stream_tween.finished
+	return
 
 func fade_group(vol_linear: float, group: String, fade_override: float = -1.0):
 	if group in groups and group!="":
@@ -277,6 +286,8 @@ func fade_group(vol_linear: float, group: String, fade_override: float = -1.0):
 	
 		for stream in groups[group].streams:
 			group_tween.tween_method(interpolate_vol.bind(stream, 1), groups[group].vol, vol_linear, playlist_data.fade_length if fade_override<0.0 else fade_override)
+		await group_tween.finished
+	return
 
 func fade_playlist(vol_linear: float, stop_audio: bool = false, fade_override: float = -1.0):
 	if stream_data.is_empty(): return
@@ -288,6 +299,7 @@ func fade_playlist(vol_linear: float, stop_audio: bool = false, fade_override: f
 	await playlist_tween.finished
 	if stop_audio and playlist_vol<=0.0:
 		stop()
+	return
 
 func interpolate_vol(vol_linear: float, stream: LdStream, type: int):
 	match type:
@@ -308,6 +320,8 @@ func set_v_state(new_state: String, fade_override: float = -1.0):
 				fade_group(0.0, group, fade_override)
 		for group in v_states[new_state].groups:
 			fade_group(1.0, group, fade_override)
+		await get_tree().create_timer(playlist_data.fade_length if fade_override<0.0 else fade_override).timeout
+	return
 
 # may or may not keep this in
 func toggle_v_state(state: String, fade_override: float = -1.0):
@@ -318,6 +332,8 @@ func toggle_v_state(state: String, fade_override: float = -1.0):
 		for group in v_states[state].groups:
 			var current_group_vol = groups[group].vol
 			fade_group(1.0 if current_group_vol<=0.0 else 0.0, group, fade_override)
+		await get_tree().create_timer(playlist_data.fade_length if fade_override<0.0 else fade_override).timeout
+	return
 
 # Horizontal Remixing
 func check_h_transition(transition: LdTransition) -> bool:
@@ -373,12 +389,14 @@ func get_beats_since_sect(time: float) -> float:
 			return beats
 	return 0
 
-func play_queueable(stream: String, wait_for_beat: float = 1.0):
+func play_queueable(stream: String, wait_beat: float = 1.0):
 	if stream in stream_data and is_playing:
 		var queueable = stream_data[stream]
 		
-		if queueable.connected == wait_for_beat: return
-		match wait_for_beat:
+		if queueable.connected == wait_beat: return
+		match wait_beat:
+			0.0:
+				pass
 			1.0: 
 				queueable.connected = 1.0
 				await self.quarter_beat
@@ -391,7 +409,7 @@ func play_queueable(stream: String, wait_for_beat: float = 1.0):
 			_:
 				return
 		queueable.play(0+AudioServer.get_time_to_next_mix())
-		queueable.connected = 0.0
+		queueable.connected = -1.0
 	
 func _physics_process(delta):
 	if is_playing:
@@ -416,6 +434,17 @@ func report_beat():
 			self.eighth_beat.emit(beat_position) 
 		beat_label.text = "Measure, Beat, Time Signature: {msr}, {bt}, {bim}/{bv}".format({"msr": total_measures, "bt": fmod(beat_position-1,current_beats_in_measure)+1, "bim": current_beats_in_measure, "bv":current_beat_value})
 		last_reported_beat = beat_position
+
+func wait_for_beat(beat: float = 1.0):
+	match beat:
+		1.0: 
+			await self.quarter_beat
+		0.5: 
+			await self.eighth_beat
+		4.0:
+			await self.measure
+		_:
+			return
 
 func wait_for_section(sect: String, fire_in_middle: bool = false) -> bool:
 	if sect != "" and sect in h_sections:
@@ -446,7 +475,8 @@ func check_end(time_check: float):
 		if playlist_data.loop:
 			play(playlist_data.loop_offset)
 
-
+func start_action_set(action_set_name: String):
+	action_sets[action_set_name].trigger_actions(self)
 
 func prepare_debug():
 	play_button.pressed.connect(_on_play_button_pressed)
@@ -456,6 +486,7 @@ func prepare_debug():
 	init_vertical()
 	init_horizontal()
 	init_queueables()
+	init_actions()
 
 func init_vertical():
 	vertical_option.clear()
@@ -482,6 +513,13 @@ func init_queueables():
 			btn.text = s
 			queueables_container.add_child(btn)
 			btn.pressed.connect(play_queueable.bind(s, 1.0))
+
+func init_actions():
+	for a in action_sets:
+		var btn: Button = Button.new()
+		btn.text = a
+		actions_container.add_child(btn)
+		btn.pressed.connect(start_action_set.bind(a))
 
 func _on_play_button_pressed():
 	play(0.0)

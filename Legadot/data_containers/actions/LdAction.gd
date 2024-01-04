@@ -1,5 +1,5 @@
 extends Resource
 class_name LdAction
 
-func trigger_action(ld_player: LdStreamPlayer):
+func trigger_action(_ld_player: LdStreamPlayer):
 	pass

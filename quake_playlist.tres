@@ -1,7 +1,10 @@
-[gd_resource type="Resource" script_class="LdPlaylistData" load_steps=21 format=3 uid="uid://busknx7fgmyl1"]
+[gd_resource type="Resource" script_class="LdPlaylistData" load_steps=27 format=3 uid="uid://busknx7fgmyl1"]
 
+[ext_resource type="Script" path="res://Legadot/data_containers/actions/LdWaitBeatAction.gd" id="1_bd0d4"]
 [ext_resource type="Script" path="res://Legadot/data_containers/LdBpmData.gd" id="1_ta24g"]
+[ext_resource type="Script" path="res://Legadot/data_containers/actions/LdVStateAction.gd" id="2_pxuwl"]
 [ext_resource type="Script" path="res://Legadot/data_containers/LdPlaylistData.gd" id="2_wwwci"]
+[ext_resource type="Script" path="res://Legadot/data_containers/actions/LdActionSet.gd" id="3_ohgmv"]
 [ext_resource type="AudioStream" uid="uid://btnbhbnpuxpjt" path="res://eighth-hour/quake-6-45-new.wav" id="3_qethh"]
 [ext_resource type="Script" path="res://Legadot/data_containers/LdStreamData.gd" id="4_lyebm"]
 [ext_resource type="AudioStream" uid="uid://bp4o2ccnfg620" path="res://eighth-hour/quake-7-15-new.wav" id="5_4efi6"]
@@ -9,6 +12,21 @@
 [ext_resource type="AudioStream" uid="uid://cdn85ml2k7ngw" path="res://eighth-hour/quake-8-15.wav" id="7_ubhnp"]
 [ext_resource type="AudioStream" uid="uid://djil48jn2f6xr" path="res://eighth-hour/quake-7-15-nowhite.wav" id="8_ssnys"]
 [ext_resource type="Script" path="res://Legadot/data_containers/LdVerticalStateData.gd" id="9_f538g"]
+
+[sub_resource type="Resource" id="Resource_jetqc"]
+script = ExtResource("1_bd0d4")
+beat = 4.0
+
+[sub_resource type="Resource" id="Resource_pisai"]
+script = ExtResource("2_pxuwl")
+v_state = "stage2"
+fade_length = 0.8
+toggle_state = false
+
+[sub_resource type="Resource" id="Resource_w83um"]
+script = ExtResource("3_ohgmv")
+action_set_name = "set_stage2"
+actions = Array[Resource("res://Legadot/data_containers/actions/LdAction.gd")]([SubResource("Resource_jetqc"), SubResource("Resource_pisai")])
 
 [sub_resource type="Resource" id="Resource_lu3cj"]
 script = ExtResource("1_ta24g")
@@ -112,5 +130,6 @@ transitions = Array[Resource("res://Legadot/data_containers/LdTransitionData.gd"
 bpm_times = Array[ExtResource("1_ta24g")]([SubResource("Resource_lu3cj")])
 count_subdivision = 1
 events = Array[Resource("res://Legadot/data_containers/LdEventData.gd")]([])
+action_sets = Array[ExtResource("3_ohgmv")]([SubResource("Resource_w83um")])
 default_v_state = "stage1"
 default_h_state = ""

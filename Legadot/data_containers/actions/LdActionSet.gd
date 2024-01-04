@@ -7,6 +7,7 @@ var local_password: float
 var ld_stream_player: LdStreamPlayer
 
 func trigger_actions(ld_player: LdStreamPlayer):
+	ld_stream_player = ld_player
 	self.local_password = Time.get_unix_time_from_system()
 	ld_player.coroutine_password = self.local_password
 	
@@ -16,6 +17,7 @@ func trigger_actions(ld_player: LdStreamPlayer):
 				await action.trigger_action(ld_player)
 		else:
 			break
+	if is_password_valid():
 		ld_player.coroutine_password = 0.0
 
 func is_password_valid() -> bool:
