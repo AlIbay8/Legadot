@@ -446,25 +446,27 @@ func wait_for_beat(beat: float = 1.0):
 		_:
 			return
 
-func wait_for_section(sect: String, fire_in_middle: bool = false) -> bool:
-	if sect != "" and sect in h_sections:
-		if fire_in_middle and current_section==sect:
+func wait_for_section(sections: String, fire_in_middle: bool = false) -> bool:
+	if sections != "":
+		var sect_array := sections.split(",", false)
+		if fire_in_middle and sect_array.has(current_section):
 			return true
 		var reached_section: String = await self.section
-		if reached_section == sect:
+		if sect_array.has(reached_section):
 			return true
 		else:
-			return await wait_for_section(sect)
+			return await wait_for_section(sections)
 	else:
 		return false
 
-func wait_for_event(event: String) -> bool:
-	if event!="" and event_names.has(event):
+func wait_for_event(events: String) -> bool:
+	if events!="":
+		var event_array := events.split(",", false)
 		var reached_event: String = await self.event_reached
-		if reached_event == event:
+		if event_array.has(reached_event):
 			return true
 		else:
-			return await wait_for_event(event)
+			return await wait_for_event(events)
 	else:
 		return false
 
