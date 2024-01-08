@@ -1,7 +1,7 @@
 [gd_scene load_steps=5 format=3 uid="uid://dxq2ex6wdqc1m"]
 
 [ext_resource type="Script" path="res://Legadot/LdStreamPlayer.gd" id="1_8g7yn"]
-[ext_resource type="Resource" uid="uid://busknx7fgmyl1" path="res://quake_playlist.tres" id="2_t0r6a"]
+[ext_resource type="Resource" uid="uid://cwxl75pemnjov" path="res://test_playlist.tres" id="2_iwaat"]
 
 [sub_resource type="Theme" id="Theme_2guc0"]
 default_font_size = 30
@@ -11,7 +11,7 @@ font_size = 36
 
 [node name="LdStreamPlayer" type="Node" node_paths=PackedStringArray("stream_players", "timers")]
 script = ExtResource("1_8g7yn")
-playlist_data = ExtResource("2_t0r6a")
+playlist_data = ExtResource("2_iwaat")
 stream_players = NodePath("StreamPlayers")
 timers = NodePath("Timers")
 auto_start = true

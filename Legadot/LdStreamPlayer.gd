@@ -514,7 +514,7 @@ func init_queueables():
 			var btn: Button = Button.new()
 			btn.text = s
 			queueables_container.add_child(btn)
-			btn.pressed.connect(play_queueable.bind(s, 1.0))
+			btn.pressed.connect(play_queueable.bind(s, 1.0/playlist_data.count_subdivision))
 
 func init_actions():
 	for a in action_sets:
