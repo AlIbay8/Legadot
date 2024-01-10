@@ -59,12 +59,16 @@ signal playlist_finished()
 #@export_category("Debug")
 @onready var debug_label = $DebugMenu/MarginContainer/VBoxContainer/DebugLabel
 @onready var play_button = $DebugMenu/MarginContainer/VBoxContainer/SongControls/PlayButton
+@onready var pause_button = $DebugMenu/MarginContainer/VBoxContainer/SongControls/PauseButton
 @onready var stop_button = $DebugMenu/MarginContainer/VBoxContainer/SongControls/StopButton
 @onready var vertical_option = $DebugMenu/MarginContainer/VBoxContainer/VerticalHorizontalControlsContainter/VerticalOption
 @onready var horizontal_option = $DebugMenu/MarginContainer/VBoxContainer/VerticalHorizontalControlsContainter/HorizontalOption
 @onready var beat_label = $DebugMenu/MarginContainer/VBoxContainer/BeatLabel
 @onready var queueables_container = $DebugMenu/MarginContainer/VBoxContainer/QueueablesContainer
 @onready var actions_container = $DebugMenu/MarginContainer/VBoxContainer/ActionsContainer
+@onready var song_progress: HSlider = $DebugMenu/MarginContainer/VBoxContainer/SongControls/HBoxContainer/VBoxContainer/SongProgress
+@onready var time_label: Label = $DebugMenu/MarginContainer/VBoxContainer/TimeLabel
+
 
 func _ready():
 	init_playlist()
@@ -188,6 +192,8 @@ func build_timeline():
 		end = playlist_data.end_time
 		if not (end in timeline):
 			timeline[end] = LdTimelineEvent.new(end)
+	if song_progress:
+		song_progress.max_value = end
 	#print("end time: ", end, ", ", playlist_data.end_time)
 
 func assign_timers():
@@ -223,6 +229,8 @@ func build_action_sets():
 func play(from: float = 0.0):
 	if is_playing:
 		stop(true)
+	if from>=playlist_data.end_time:
+		return
 	is_playing = true
 	start_position = from
 	total_measures=0
@@ -420,6 +428,14 @@ func _physics_process(delta):
 		
 		beat_position = floor(get_beats_since_sect(sec_position))/playlist_data.count_subdivision
 		report_beat()
+		
+		update_debug()
+
+func update_debug():
+	if song_progress:
+		song_progress.value = sec_position
+	if time_label:
+		time_label.text = time_convert(sec_position)
 
 func report_beat():
 	if last_reported_beat!=beat_position:
@@ -482,9 +498,11 @@ func start_action_set(action_set_name: String):
 
 func prepare_debug():
 	play_button.pressed.connect(_on_play_button_pressed)
+	pause_button.pressed.connect(_on_pause_button_pressed)
 	stop_button.pressed.connect(_on_stop_button_pressed)
 	vertical_option.item_selected.connect(_on_vertical_option_item_selected)
 	horizontal_option.item_selected.connect(_on_horizontal_option_item_selected)
+	song_progress.drag_started.connect(_on_song_progress_drag_started)
 	init_vertical()
 	init_horizontal()
 	init_queueables()
@@ -523,14 +541,47 @@ func init_actions():
 		actions_container.add_child(btn)
 		btn.pressed.connect(start_action_set.bind(a))
 
+func time_convert(time_in_sec: float):
+	var milliseconds = int(fmod(time_in_sec, 1.0)*100)
+	var seconds = int(time_in_sec)%60
+	var minutes = int(int(time_in_sec)/60.0)%60
+	
+	#returns a string with the format "MM:SS.MS"
+	return "%02d:%02d.%02d" % [minutes, seconds, milliseconds]
+
 func _on_play_button_pressed():
-	play(0.0)
+	if is_playing:
+		play(0.0)
+	else:
+		play(sec_position)
+
+func _on_pause_button_pressed():
+	pause()
 
 func _on_stop_button_pressed():
 	stop()
+	update_debug()
 
 func _on_vertical_option_item_selected(index):
-	set_v_state(vertical_option.get_item_text(index))
+	toggle_v_state(vertical_option.get_item_text(index))
 
 func _on_horizontal_option_item_selected(index):
 	set_h_state(horizontal_option.get_item_text(index))
+
+func _on_song_progress_drag_started():
+	var was_playing: bool = false
+	if is_playing:
+		was_playing = true
+		pause()
+		
+	await song_progress.drag_ended
+	if was_playing:
+		print(song_progress.value, " ", playlist_data.end_time)
+		play(song_progress.value)
+	else:
+		sec_position = song_progress.value
+		if time_label:
+			time_label.text = time_convert(sec_position)
+
+
+

@@ -1,0 +1,97 @@
+[gd_resource type="Resource" script_class="LdPlaylistData" load_steps=17 format=3 uid="uid://ji2txp25khee"]
+
+[ext_resource type="Script" path="res://Legadot/data_containers/LdPlaylistData.gd" id="1_8nnud"]
+[ext_resource type="AudioStream" uid="uid://bwjjinu2yfsps" path="res://black_out/black-out_demucs4-ht_other_[mvsep.com].wav" id="2_5dxjn"]
+[ext_resource type="Script" path="res://Legadot/data_containers/LdStreamData.gd" id="2_yuxgu"]
+[ext_resource type="AudioStream" uid="uid://cpw3k644uvmut" path="res://black_out/black-out_demucs4-ht_bass_[mvsep.com].wav" id="4_ldu7u"]
+[ext_resource type="AudioStream" uid="uid://cbgc0ex5bo1sk" path="res://black_out/black-out_demucs4-ht_drums_[mvsep.com].wav" id="5_hb0dx"]
+[ext_resource type="AudioStream" uid="uid://bjoirfv6agxk3" path="res://black_out/black-out_demucs4-ht_vocals_[mvsep.com].wav" id="6_7ws65"]
+[ext_resource type="Script" path="res://Legadot/data_containers/LdVerticalStateData.gd" id="7_85ao7"]
+
+[sub_resource type="Resource" id="Resource_7joug"]
+script = ExtResource("2_yuxgu")
+name = "instruments"
+audio_stream = ExtResource("2_5dxjn")
+time = 0.0
+vol = 0.5
+group = "instruments"
+queueable = false
+allow_dupes = false
+
+[sub_resource type="Resource" id="Resource_b5d0r"]
+script = ExtResource("2_yuxgu")
+name = "bass"
+audio_stream = ExtResource("4_ldu7u")
+time = 0.0
+vol = 0.5
+group = "bass"
+queueable = false
+allow_dupes = false
+
+[sub_resource type="Resource" id="Resource_i1xmf"]
+script = ExtResource("2_yuxgu")
+name = "drums"
+audio_stream = ExtResource("5_hb0dx")
+time = 0.0
+vol = 0.5
+group = "drums"
+queueable = false
+allow_dupes = false
+
+[sub_resource type="Resource" id="Resource_p6eug"]
+script = ExtResource("2_yuxgu")
+name = "vocals"
+audio_stream = ExtResource("6_7ws65")
+time = 0.0
+vol = 0.5
+group = "vocals"
+queueable = false
+allow_dupes = false
+
+[sub_resource type="Resource" id="Resource_dnbwv"]
+script = ExtResource("7_85ao7")
+state_name = "instruments"
+groups = Array[String](["instruments"])
+add_only = true
+
+[sub_resource type="Resource" id="Resource_y4ocr"]
+script = ExtResource("7_85ao7")
+state_name = "drums"
+groups = Array[String](["drums"])
+add_only = true
+
+[sub_resource type="Resource" id="Resource_b6hra"]
+script = ExtResource("7_85ao7")
+state_name = "bass"
+groups = Array[String](["bass"])
+add_only = true
+
+[sub_resource type="Resource" id="Resource_ddds6"]
+script = ExtResource("7_85ao7")
+state_name = "vocals"
+groups = Array[String](["vocals"])
+add_only = true
+
+[sub_resource type="Resource" id="Resource_bwagi"]
+script = ExtResource("7_85ao7")
+state_name = "default"
+groups = Array[String](["drums", "bass", "instruments"])
+add_only = false
+
+[resource]
+script = ExtResource("1_8nnud")
+playlist_name = "black_out"
+streams = Array[ExtResource("2_yuxgu")]([SubResource("Resource_7joug"), SubResource("Resource_b5d0r"), SubResource("Resource_i1xmf"), SubResource("Resource_p6eug")])
+end_time = 0.0
+loop = false
+loop_offset = 0.0
+vertical_states = Array[ExtResource("7_85ao7")]([SubResource("Resource_dnbwv"), SubResource("Resource_y4ocr"), SubResource("Resource_b6hra"), SubResource("Resource_ddds6"), SubResource("Resource_bwagi")])
+fade_length = 1.395
+sections = Array[Resource("res://Legadot/data_containers/LdSectionData.gd")]([])
+transitions = Array[Resource("res://Legadot/data_containers/LdTransitionData.gd")]([])
+bpm_times = Array[Resource("res://Legadot/data_containers/LdBpmData.gd")]([])
+count_subdivision = 1
+events = Array[Resource("res://Legadot/data_containers/LdEventData.gd")]([])
+action_sets = Array[Resource("res://Legadot/data_containers/actions/LdActionSet.gd")]([])
+default_v_state = ""
+default_h_state = ""
