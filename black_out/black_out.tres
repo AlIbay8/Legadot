@@ -93,6 +93,6 @@ bpm_times = Array[Resource("res://Legadot/data_containers/LdBpmData.gd")]([])
 count_subdivision = 1
 events = Array[Resource("res://Legadot/data_containers/LdEventData.gd")]([])
 action_sets = Array[Resource("res://Legadot/data_containers/actions/LdActionSet.gd")]([])
-default_v_state = ""
+default_v_state = "default"
 default_h_state = ""
 max_playlist_vol = 0.5

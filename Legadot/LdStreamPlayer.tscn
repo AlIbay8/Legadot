@@ -1,7 +1,7 @@
 [gd_scene load_steps=5 format=3 uid="uid://dxq2ex6wdqc1m"]
 
 [ext_resource type="Script" path="res://Legadot/LdStreamPlayer.gd" id="1_8g7yn"]
-[ext_resource type="Resource" uid="uid://ji2txp25khee" path="res://black_out/black_out.tres" id="2_oh7yt"]
+[ext_resource type="Resource" uid="uid://cw6ucoxliw76c" path="res://love_song_of_new_century/love_song_of_new_century.tres" id="2_2evww"]
 
 [sub_resource type="Theme" id="Theme_2guc0"]
 default_font_size = 30
@@ -11,7 +11,7 @@ font_size = 36
 
 [node name="LdStreamPlayer" type="Node" node_paths=PackedStringArray("stream_players", "timers")]
 script = ExtResource("1_8g7yn")
-playlist_data = ExtResource("2_oh7yt")
+playlist_data = ExtResource("2_2evww")
 stream_players = NodePath("StreamPlayers")
 timers = NodePath("Timers")
 auto_start = true
@@ -103,6 +103,38 @@ text = "H State:"
 [node name="HorizontalOption" type="OptionButton" parent="DebugMenu/MarginContainer/VBoxContainer/VerticalHorizontalControlsContainter"]
 layout_mode = 2
 
+[node name="StreamControls" type="HBoxContainer" parent="DebugMenu/MarginContainer/VBoxContainer"]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="DebugMenu/MarginContainer/VBoxContainer/StreamControls"]
+layout_mode = 2
+text = "Streams: "
+
+[node name="StreamsScrollContainer" type="ScrollContainer" parent="DebugMenu/MarginContainer/VBoxContainer/StreamControls"]
+layout_mode = 2
+size_flags_horizontal = 3
+vertical_scroll_mode = 0
+
+[node name="StreamsContainer" type="HBoxContainer" parent="DebugMenu/MarginContainer/VBoxContainer/StreamControls/StreamsScrollContainer"]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="GroupControls" type="HBoxContainer" parent="DebugMenu/MarginContainer/VBoxContainer"]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="DebugMenu/MarginContainer/VBoxContainer/GroupControls"]
+layout_mode = 2
+text = "Groups: "
+
+[node name="GroupsScrollContainer" type="ScrollContainer" parent="DebugMenu/MarginContainer/VBoxContainer/GroupControls"]
+layout_mode = 2
+size_flags_horizontal = 3
+vertical_scroll_mode = 0
+
+[node name="GroupsContainer" type="HBoxContainer" parent="DebugMenu/MarginContainer/VBoxContainer/GroupControls/GroupsScrollContainer"]
+layout_mode = 2
+size_flags_vertical = 3
+
 [node name="QueueablesContainer" type="HBoxContainer" parent="DebugMenu/MarginContainer/VBoxContainer"]
 layout_mode = 2
 
@@ -120,3 +152,8 @@ text = "Actions: "
 [node name="BeatLabel" type="Label" parent="DebugMenu/MarginContainer/VBoxContainer"]
 layout_mode = 2
 text = "Measure, Beat, Time Signature: 7, 3, 4/4"
+
+[connection signal="group_muted" from="." to="." method="_on_group_muted"]
+[connection signal="group_unmuted" from="." to="." method="_on_group_unmuted"]
+[connection signal="stream_muted" from="." to="." method="_on_stream_muted"]
+[connection signal="stream_unmuted" from="." to="." method="_on_stream_unmuted"]

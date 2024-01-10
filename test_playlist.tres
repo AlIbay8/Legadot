@@ -240,3 +240,4 @@ events = Array[Resource("res://Legadot/data_containers/LdEventData.gd")]([])
 action_sets = Array[Resource("res://Legadot/data_containers/actions/LdActionSet.gd")]([])
 default_v_state = "main"
 default_h_state = "tutorial"
+max_playlist_vol = 1.0

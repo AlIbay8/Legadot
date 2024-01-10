@@ -46,8 +46,10 @@ var playlist_vol: float = 1.0
 
 var tracker_timer: Timer
 var longest_time: float = 0.0
-var active_timers: int = 0
-var active_players: int = 0
+
+var unmuted_streams: Array[String]
+var unmuted_groups: Array[String]
+var unmuted_playlist: bool = false
 
 signal measure(beat_pos: float)
 signal quarter_beat(beat_pos: float)
@@ -55,6 +57,14 @@ signal eighth_beat(beat_pos: float)
 signal section(sect: String)
 signal event_reached(event: String)
 signal playlist_finished()
+
+signal stream_muted(stream_name: String)
+signal group_muted(group_name: String)
+signal playlist_muted()
+
+signal stream_unmuted(stream_name: String)
+signal group_unmuted(group_name: String)
+signal playlist_unmuted()
 
 #@export_category("Debug")
 @onready var debug_label = $DebugMenu/MarginContainer/VBoxContainer/DebugLabel
@@ -68,7 +78,10 @@ signal playlist_finished()
 @onready var actions_container = $DebugMenu/MarginContainer/VBoxContainer/ActionsContainer
 @onready var song_progress: HSlider = $DebugMenu/MarginContainer/VBoxContainer/SongControls/HBoxContainer/VBoxContainer/SongProgress
 @onready var time_label: Label = $DebugMenu/MarginContainer/VBoxContainer/TimeLabel
-
+@onready var streams_container: HBoxContainer = $DebugMenu/MarginContainer/VBoxContainer/StreamControls/StreamsScrollContainer/StreamsContainer
+@onready var groups_container: HBoxContainer = $DebugMenu/MarginContainer/VBoxContainer/GroupControls/GroupsScrollContainer/GroupsContainer
+var stream_toggles: Dictionary = {}
+var group_toggles: Dictionary = {}
 
 func _ready():
 	init_playlist()
@@ -90,6 +103,10 @@ func init_playlist():
 			#v_state = playlist_data.default_v_state
 			set_v_state(playlist_data.default_v_state,0.0)
 		else:
+			for group in groups:
+				update_group_mute(groups[group].vol, group)
+			for stream in stream_data:
+				update_stream_mute(stream_data[stream].vol, stream)
 			fade_playlist(1.0,false,0.0)
 		
 		if playlist_data.default_h_state!="":
@@ -234,8 +251,6 @@ func play(from: float = 0.0):
 	is_playing = true
 	start_position = from
 	total_measures=0
-	active_players=0
-	active_timers=0
 	var time_keys = timeline.keys()
 	time_keys.sort()
 	for time in time_keys:
@@ -245,7 +260,6 @@ func play(from: float = 0.0):
 				if not tracker_timer or timeline[time].timer.wait_time>tracker_timer.wait_time:
 					tracker_timer = timeline[time].timer
 				timeline[time].timer.start()
-				self.active_timers+=1
 			else:
 				timeline[time].trigger_event(self, abs(from-time), false)
 			continue
@@ -278,27 +292,32 @@ func seek(to: float):
 	play(to)
 
 # Fade functions
-func fade_stream(vol_linear, stream: String, fade_override: float = -1.0):
+func fade_stream(vol_linear: float, stream: String, fade_override: float = -1.0):
 	if stream in stream_data:
+		update_stream_mute(vol_linear, stream)
 		var stream_tween = create_tween()
 		stream_tween.set_parallel(true)
-		
+		if vol_linear>stream_data[stream].max_vol:
+			vol_linear = stream_data[stream].max_vol
 		stream_tween.tween_method(interpolate_vol.bind(stream_data[stream], 0), stream_data[stream].vol, vol_linear, playlist_data.fade_length if fade_override<0.0 else fade_override)
 		await stream_tween.finished
 	return
 
 func fade_group(vol_linear: float, group: String, fade_override: float = -1.0):
 	if group in groups and group!="":
+		update_group_mute(vol_linear, group)
 		var group_tween = create_tween()
 		group_tween.set_parallel(true)
 	
 		for stream in groups[group].streams:
+			update_stream_mute(vol_linear, stream.name)
 			group_tween.tween_method(interpolate_vol.bind(stream, 1), groups[group].vol, vol_linear, playlist_data.fade_length if fade_override<0.0 else fade_override)
 		await group_tween.finished
 	return
 
 func fade_playlist(vol_linear: float, stop_audio: bool = false, fade_override: float = -1.0):
 	if stream_data.is_empty(): return
+	update_playlist_mute(vol_linear)
 	var playlist_tween = create_tween()
 	playlist_tween.set_parallel(true)
 	
@@ -319,6 +338,32 @@ func interpolate_vol(vol_linear: float, stream: LdStream, type: int):
 			playlist_vol = vol_linear
 	var new_vol: float = stream.vol*groups[stream.group].vol*playlist_vol*playlist_data.max_playlist_vol
 	stream.player.volume_db = linear_to_db(new_vol)
+
+func update_stream_mute(vol_linear: float, stream_name: String):
+	if vol_linear==0.0:
+		unmuted_streams.erase(stream_name)
+		self.stream_muted.emit(stream_name)
+	elif vol_linear>0.0 and not unmuted_streams.has(stream_name):
+		unmuted_streams.append(stream_name)
+		self.stream_unmuted.emit(stream_name)
+
+func update_group_mute(vol_linear: float, group_name: String):
+	if vol_linear==0.0:
+		unmuted_groups.erase(group_name)
+		self.group_muted.emit(group_name)
+	elif vol_linear>0.0 and not unmuted_groups.has(group_name):
+		unmuted_groups.append(group_name)
+		self.group_unmuted.emit(group_name)
+
+func update_playlist_mute(vol_linear: float):
+	if vol_linear==0.0:
+		if unmuted_playlist:
+			unmuted_playlist = false
+			self.playlist_muted.emit()
+	elif vol_linear>0.0 and playlist_vol<=0.0:
+		if not unmuted_playlist:
+			unmuted_playlist = true
+			self.playlist_unmuted.emit()
 
 # Vertical Remixing
 func set_v_state(new_state: String, fade_override: float = -1.0):
@@ -505,6 +550,8 @@ func prepare_debug():
 	song_progress.drag_started.connect(_on_song_progress_drag_started)
 	init_vertical()
 	init_horizontal()
+	init_stream_toggles()
+	init_group_toggles()
 	init_queueables()
 	init_actions()
 
@@ -525,6 +572,24 @@ func init_horizontal():
 		if h==h_state:
 			horizontal_option.select(i)
 		i+=1
+
+func init_stream_toggles():
+	for stream in stream_data:
+		var btn: CheckButton = CheckButton.new()
+		btn.text = stream
+		btn.toggled.connect(func(button_pressed:bool): fade_stream(1.0 if button_pressed else 0.0, stream))
+		stream_toggles[stream] = btn
+		streams_container.add_child(btn)
+
+func init_group_toggles():
+	for group in groups:
+		if group=="": continue
+		var btn: CheckButton = CheckButton.new()
+		btn.text = group
+		btn.button_pressed=true
+		btn.toggled.connect(func(button_pressed:bool): fade_group(1.0 if button_pressed else 0.0, group))
+		group_toggles[group] = btn
+		groups_container.add_child(btn)
 
 func init_queueables():
 	for s in stream_data:
@@ -563,7 +628,7 @@ func _on_stop_button_pressed():
 	update_debug()
 
 func _on_vertical_option_item_selected(index):
-	toggle_v_state(vertical_option.get_item_text(index))
+	set_v_state(vertical_option.get_item_text(index))
 
 func _on_horizontal_option_item_selected(index):
 	set_h_state(horizontal_option.get_item_text(index))
@@ -583,5 +648,23 @@ func _on_song_progress_drag_started():
 		if time_label:
 			time_label.text = time_convert(sec_position)
 
+func _on_stream_muted(stream_name):
+	print("stream muted: ", stream_name)
+	stream_toggles[stream_name].button_pressed = false
+	pass # Replace with function body.
 
+func _on_stream_unmuted(stream_name):
+	print("stream unmuted: ", stream_name)
+	stream_toggles[stream_name].button_pressed = true
+	pass # Replace with function body.
 
+func _on_group_muted(group_name):
+	if group_name=="": return
+	print("group muted: ", group_name)
+	group_toggles[group_name].button_pressed = false
+	pass # Replace with function body.
+
+func _on_group_unmuted(group_name):
+	print("group unmuted: ", group_name)
+	group_toggles[group_name].button_pressed = true
+	pass # Replace with function body.

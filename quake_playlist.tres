@@ -146,3 +146,4 @@ events = Array[Resource("res://Legadot/data_containers/LdEventData.gd")]([])
 action_sets = Array[ExtResource("3_ohgmv")]([SubResource("Resource_w83um")])
 default_v_state = "stage1"
 default_h_state = ""
+max_playlist_vol = 1.0
