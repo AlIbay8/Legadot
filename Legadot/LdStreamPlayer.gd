@@ -317,7 +317,7 @@ func interpolate_vol(vol_linear: float, stream: LdStream, type: int):
 			groups[stream.group].vol = vol_linear
 		2: 
 			playlist_vol = vol_linear
-	var new_vol: float = stream.vol*groups[stream.group].vol*playlist_vol
+	var new_vol: float = stream.vol*groups[stream.group].vol*playlist_vol*playlist_data.max_playlist_vol
 	stream.player.volume_db = linear_to_db(new_vol)
 
 # Vertical Remixing

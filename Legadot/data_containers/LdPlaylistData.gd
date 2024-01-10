@@ -29,3 +29,4 @@ class_name LdPlaylistData
 @export_group("Defaults")
 @export var default_v_state: String
 @export var default_h_state: String
+@export_range(0.0,2.0,0.01) var max_playlist_vol: float = 1.0
