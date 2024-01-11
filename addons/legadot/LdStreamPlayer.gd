@@ -3,8 +3,8 @@ class_name LdStreamPlayer
 
 @export var playlist_data: LdPlaylistData
 
-@onready var stream_players: Node = $StreamPlayers
-@onready var timers: Node = $Timers
+var stream_players: Node
+var timers: Node
 
 var stream_data: Dictionary = {}
 var groups: Dictionary = {}
@@ -37,6 +37,7 @@ var playlist_vol: float = 1.0
 @export var v_state: String:
 	set(state):
 		if state in v_states:
+			print("v state changed")
 			set_v_state(state)
 		
 @export var h_state: String:
@@ -84,7 +85,21 @@ var stream_toggles: Dictionary = {}
 var group_toggles: Dictionary = {}
 
 func _ready():
+	init_stream_players_node()
+	init_timers_node()
 	init_playlist()
+
+func init_stream_players_node():
+	var stream_players_node: Node = Node.new()
+	stream_players_node.name = "StreamPlayers"
+	self.add_child(stream_players_node)
+	self.stream_players = stream_players_node
+
+func init_timers_node():
+	var timers_node: Node = Node.new()
+	timers_node.name = "Timers"
+	self.add_child(timers_node)
+	self.timers = timers_node
 
 func init_playlist():
 	if playlist_data:
@@ -100,7 +115,7 @@ func init_playlist():
 		prepare_debug()
 		
 		if playlist_data.default_v_state!="":
-			#v_state = playlist_data.default_v_state
+			print("set default v state")
 			set_v_state(playlist_data.default_v_state,0.0)
 		else:
 			for group in groups:
@@ -311,6 +326,7 @@ func fade_group(vol_linear: float, group: String, fade_override: float = -1.0):
 	
 		for stream in groups[group].streams:
 			update_stream_mute(vol_linear, stream.name)
+			print(fade_override)
 			group_tween.tween_method(interpolate_vol.bind(stream, 1), groups[group].vol, vol_linear, playlist_data.fade_length if fade_override<0.0 else fade_override)
 		await group_tween.finished
 	return
@@ -367,6 +383,7 @@ func update_playlist_mute(vol_linear: float):
 
 # Vertical Remixing
 func set_v_state(new_state: String, fade_override: float = -1.0):
+	print("set v state: ", new_state, ", ", fade_override)
 	if new_state in v_states:
 		if not v_states[new_state].add_only:
 			for group in groups:
@@ -577,6 +594,7 @@ func init_stream_toggles():
 	for stream in stream_data:
 		var btn: CheckButton = CheckButton.new()
 		btn.text = stream
+		btn.set_pressed_no_signal(true)
 		btn.toggled.connect(func(button_pressed:bool): fade_stream(1.0 if button_pressed else 0.0, stream))
 		stream_toggles[stream] = btn
 		streams_container.add_child(btn)
@@ -586,7 +604,7 @@ func init_group_toggles():
 		if group=="": continue
 		var btn: CheckButton = CheckButton.new()
 		btn.text = group
-		btn.button_pressed=true
+		btn.set_pressed_no_signal(false)
 		btn.toggled.connect(func(button_pressed:bool): fade_group(1.0 if button_pressed else 0.0, group))
 		group_toggles[group] = btn
 		groups_container.add_child(btn)
