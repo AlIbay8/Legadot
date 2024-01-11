@@ -1,6 +1,6 @@
 [gd_scene load_steps=4 format=3 uid="uid://ca1kvgmeh525k"]
 
-[ext_resource type="Script" path="res://Legadot/LdStreamPlayer3D.gd" id="1_8plp2"]
+[ext_resource type="Script" path="res://addons/legadot/LdStreamPlayer3D.gd" id="1_8plp2"]
 
 [sub_resource type="Theme" id="Theme_2guc0"]
 default_font_size = 30

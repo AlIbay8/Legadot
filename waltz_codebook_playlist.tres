@@ -1,9 +1,9 @@
 [gd_resource type="Resource" script_class="LdPlaylistData" load_steps=12 format=3 uid="uid://b8gi6n1437ikx"]
 
-[ext_resource type="Script" path="res://Legadot/data_containers/LdBpmData.gd" id="1_1cm35"]
-[ext_resource type="Script" path="res://Legadot/data_containers/LdPlaylistData.gd" id="2_qyt77"]
+[ext_resource type="Script" path="res://addons/legadot/data_containers/LdBpmData.gd" id="1_1cm35"]
+[ext_resource type="Script" path="res://addons/legadot/data_containers/LdPlaylistData.gd" id="2_qyt77"]
 [ext_resource type="AudioStream" uid="uid://c0srs5o8gyrsg" path="res://ASIAN KUNG-FU GENERATION - Waltz in Codebook.mp3" id="3_ubpx3"]
-[ext_resource type="Script" path="res://Legadot/data_containers/LdStreamData.gd" id="4_iglqx"]
+[ext_resource type="Script" path="res://addons/legadot/data_containers/LdStreamData.gd" id="4_iglqx"]
 
 [sub_resource type="Resource" id="Resource_mm28g"]
 script = ExtResource("1_1cm35")

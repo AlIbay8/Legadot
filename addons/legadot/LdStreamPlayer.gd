@@ -3,8 +3,8 @@ class_name LdStreamPlayer
 
 @export var playlist_data: LdPlaylistData
 
-@export var stream_players: Node
-@export var timers: Node
+@onready var stream_players: Node = $StreamPlayers
+@onready var timers: Node = $Timers
 
 var stream_data: Dictionary = {}
 var groups: Dictionary = {}

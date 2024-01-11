@@ -1,10 +1,10 @@
 [gd_resource type="Resource" script_class="LdPlaylistData" load_steps=14 format=3 uid="uid://c8xpg0kt2yfwr"]
 
-[ext_resource type="Script" path="res://Legadot/data_containers/LdBpmData.gd" id="1_fkmr3"]
-[ext_resource type="Script" path="res://Legadot/data_containers/LdPlaylistData.gd" id="2_3jy7a"]
+[ext_resource type="Script" path="res://addons/legadot/data_containers/LdBpmData.gd" id="1_fkmr3"]
+[ext_resource type="Script" path="res://addons/legadot/data_containers/LdPlaylistData.gd" id="2_3jy7a"]
 [ext_resource type="AudioStream" uid="uid://dxjdpxpf27wqn" path="res://sliding_bpm.wav" id="3_bmyw5"]
-[ext_resource type="Script" path="res://Legadot/data_containers/LdStreamData.gd" id="4_tc6fh"]
-[ext_resource type="Script" path="res://Legadot/data_containers/LdVerticalStateData.gd" id="5_s6ci3"]
+[ext_resource type="Script" path="res://addons/legadot/data_containers/LdStreamData.gd" id="4_tc6fh"]
+[ext_resource type="Script" path="res://addons/legadot/data_containers/LdVerticalStateData.gd" id="5_s6ci3"]
 
 [sub_resource type="Resource" id="Resource_br7gk"]
 script = ExtResource("1_fkmr3")

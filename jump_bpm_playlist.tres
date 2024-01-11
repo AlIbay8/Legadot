@@ -1,9 +1,9 @@
 [gd_resource type="Resource" script_class="LdPlaylistData" load_steps=16 format=3 uid="uid://mll8k3nbsshp"]
 
-[ext_resource type="Script" path="res://Legadot/data_containers/LdBpmData.gd" id="1_dkn5q"]
-[ext_resource type="Script" path="res://Legadot/data_containers/LdPlaylistData.gd" id="2_nuxur"]
+[ext_resource type="Script" path="res://addons/legadot/data_containers/LdBpmData.gd" id="1_dkn5q"]
+[ext_resource type="Script" path="res://addons/legadot/data_containers/LdPlaylistData.gd" id="2_nuxur"]
 [ext_resource type="AudioStream" uid="uid://dqv6n746qvi15" path="res://jump_bpm.wav" id="3_csr3b"]
-[ext_resource type="Script" path="res://Legadot/data_containers/LdStreamData.gd" id="4_wxtjg"]
+[ext_resource type="Script" path="res://addons/legadot/data_containers/LdStreamData.gd" id="4_wxtjg"]
 [ext_resource type="AudioStream" uid="uid://b4xtivfqjmvw" path="res://queueables/collect_sfx.wav" id="5_rhe1p"]
 [ext_resource type="AudioStream" uid="uid://c8u3x4p5lgsfa" path="res://queueables/win_sfx.wav" id="6_84k42"]
 

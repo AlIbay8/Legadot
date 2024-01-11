@@ -1,0 +1,9 @@
+[gd_scene load_steps=3 format=3 uid="uid://dpsd6nguag6dc"]
+
+[ext_resource type="Script" path="res://addons/legadot/LdStreamPlayer.gd" id="1_mfw6g"]
+[ext_resource type="Resource" uid="uid://ji2txp25khee" path="res://black_out/black_out.tres" id="2_ocpjt"]
+
+[node name="LdStreamPlayer" type="Node"]
+script = ExtResource("1_mfw6g")
+playlist_data = ExtResource("2_ocpjt")
+auto_start = true

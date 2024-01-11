@@ -1,12 +1,12 @@
 [gd_resource type="Resource" script_class="LdPlaylistData" load_steps=17 format=3 uid="uid://ji2txp25khee"]
 
-[ext_resource type="Script" path="res://Legadot/data_containers/LdPlaylistData.gd" id="1_8nnud"]
+[ext_resource type="Script" path="res://addons/legadot/data_containers/LdPlaylistData.gd" id="1_8nnud"]
 [ext_resource type="AudioStream" uid="uid://bwjjinu2yfsps" path="res://black_out/black-out_demucs4-ht_other_[mvsep.com].wav" id="2_5dxjn"]
-[ext_resource type="Script" path="res://Legadot/data_containers/LdStreamData.gd" id="2_yuxgu"]
+[ext_resource type="Script" path="res://addons/legadot/data_containers/LdStreamData.gd" id="2_yuxgu"]
 [ext_resource type="AudioStream" uid="uid://cpw3k644uvmut" path="res://black_out/black-out_demucs4-ht_bass_[mvsep.com].wav" id="4_ldu7u"]
 [ext_resource type="AudioStream" uid="uid://cbgc0ex5bo1sk" path="res://black_out/black-out_demucs4-ht_drums_[mvsep.com].wav" id="5_hb0dx"]
 [ext_resource type="AudioStream" uid="uid://bjoirfv6agxk3" path="res://black_out/black-out_demucs4-ht_vocals_[mvsep.com].wav" id="6_7ws65"]
-[ext_resource type="Script" path="res://Legadot/data_containers/LdVerticalStateData.gd" id="7_85ao7"]
+[ext_resource type="Script" path="res://addons/legadot/data_containers/LdVerticalStateData.gd" id="7_85ao7"]
 
 [sub_resource type="Resource" id="Resource_7joug"]
 script = ExtResource("2_yuxgu")

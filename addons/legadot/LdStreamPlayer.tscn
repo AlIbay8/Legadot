@@ -1,0 +1,157 @@
+[gd_scene load_steps=5 format=3 uid="uid://dxq2ex6wdqc1m"]
+
+[ext_resource type="Script" path="res://addons/legadot/LdStreamPlayer.gd" id="1_8g7yn"]
+[ext_resource type="Resource" uid="uid://cw6ucoxliw76c" path="res://love_song_of_new_century/love_song_of_new_century.tres" id="2_2evww"]
+
+[sub_resource type="Theme" id="Theme_2guc0"]
+default_font_size = 30
+
+[sub_resource type="LabelSettings" id="LabelSettings_v5mwe"]
+font_size = 36
+
+[node name="LdStreamPlayer" type="Node"]
+script = ExtResource("1_8g7yn")
+playlist_data = ExtResource("2_2evww")
+auto_start = true
+h_state = "tutorial"
+
+[node name="StreamPlayers" type="Node" parent="."]
+
+[node name="Timers" type="Node" parent="."]
+
+[node name="DebugMenu" type="Control" parent="."]
+layout_mode = 3
+anchor_right = 0.178819
+anchor_bottom = 0.179012
+offset_right = 879.0
+offset_bottom = 477.0
+size_flags_horizontal = 3
+size_flags_vertical = 3
+theme = SubResource("Theme_2guc0")
+metadata/_edit_use_anchors_ = true
+
+[node name="MarginContainer" type="MarginContainer" parent="DebugMenu"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/margin_left = 20
+theme_override_constants/margin_top = 20
+theme_override_constants/margin_right = 20
+theme_override_constants/margin_bottom = 20
+
+[node name="VBoxContainer" type="VBoxContainer" parent="DebugMenu/MarginContainer"]
+layout_mode = 2
+
+[node name="DebugLabel" type="Label" parent="DebugMenu/MarginContainer/VBoxContainer"]
+layout_mode = 2
+text = "tutorial, 27"
+label_settings = SubResource("LabelSettings_v5mwe")
+
+[node name="TimeLabel" type="Label" parent="DebugMenu/MarginContainer/VBoxContainer"]
+layout_mode = 2
+
+[node name="SongControls" type="HBoxContainer" parent="DebugMenu/MarginContainer/VBoxContainer"]
+layout_mode = 2
+
+[node name="PlayButton" type="Button" parent="DebugMenu/MarginContainer/VBoxContainer/SongControls"]
+layout_mode = 2
+text = "Play"
+
+[node name="PauseButton" type="Button" parent="DebugMenu/MarginContainer/VBoxContainer/SongControls"]
+layout_mode = 2
+text = "Pause"
+
+[node name="StopButton" type="Button" parent="DebugMenu/MarginContainer/VBoxContainer/SongControls"]
+layout_mode = 2
+text = "Stop"
+
+[node name="HBoxContainer" type="HBoxContainer" parent="DebugMenu/MarginContainer/VBoxContainer/SongControls"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="VBoxContainer" type="VBoxContainer" parent="DebugMenu/MarginContainer/VBoxContainer/SongControls/HBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+alignment = 1
+
+[node name="SongProgress" type="HSlider" parent="DebugMenu/MarginContainer/VBoxContainer/SongControls/HBoxContainer/VBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+step = 0.1
+scrollable = false
+
+[node name="VerticalHorizontalControlsContainter" type="HBoxContainer" parent="DebugMenu/MarginContainer/VBoxContainer"]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="DebugMenu/MarginContainer/VBoxContainer/VerticalHorizontalControlsContainter"]
+layout_mode = 2
+text = "V State:"
+
+[node name="VerticalOption" type="OptionButton" parent="DebugMenu/MarginContainer/VBoxContainer/VerticalHorizontalControlsContainter"]
+layout_mode = 2
+allow_reselect = true
+
+[node name="Label2" type="Label" parent="DebugMenu/MarginContainer/VBoxContainer/VerticalHorizontalControlsContainter"]
+layout_mode = 2
+text = "H State:"
+
+[node name="HorizontalOption" type="OptionButton" parent="DebugMenu/MarginContainer/VBoxContainer/VerticalHorizontalControlsContainter"]
+layout_mode = 2
+
+[node name="StreamControls" type="HBoxContainer" parent="DebugMenu/MarginContainer/VBoxContainer"]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="DebugMenu/MarginContainer/VBoxContainer/StreamControls"]
+layout_mode = 2
+text = "Streams: "
+
+[node name="StreamsScrollContainer" type="ScrollContainer" parent="DebugMenu/MarginContainer/VBoxContainer/StreamControls"]
+layout_mode = 2
+size_flags_horizontal = 3
+vertical_scroll_mode = 0
+
+[node name="StreamsContainer" type="HBoxContainer" parent="DebugMenu/MarginContainer/VBoxContainer/StreamControls/StreamsScrollContainer"]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="GroupControls" type="HBoxContainer" parent="DebugMenu/MarginContainer/VBoxContainer"]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="DebugMenu/MarginContainer/VBoxContainer/GroupControls"]
+layout_mode = 2
+text = "Groups: "
+
+[node name="GroupsScrollContainer" type="ScrollContainer" parent="DebugMenu/MarginContainer/VBoxContainer/GroupControls"]
+layout_mode = 2
+size_flags_horizontal = 3
+vertical_scroll_mode = 0
+
+[node name="GroupsContainer" type="HBoxContainer" parent="DebugMenu/MarginContainer/VBoxContainer/GroupControls/GroupsScrollContainer"]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="QueueablesContainer" type="HBoxContainer" parent="DebugMenu/MarginContainer/VBoxContainer"]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="DebugMenu/MarginContainer/VBoxContainer/QueueablesContainer"]
+layout_mode = 2
+text = "Queueables: "
+
+[node name="ActionsContainer" type="HBoxContainer" parent="DebugMenu/MarginContainer/VBoxContainer"]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="DebugMenu/MarginContainer/VBoxContainer/ActionsContainer"]
+layout_mode = 2
+text = "Actions: "
+
+[node name="BeatLabel" type="Label" parent="DebugMenu/MarginContainer/VBoxContainer"]
+layout_mode = 2
+text = "Measure, Beat, Time Signature: 7, 3, 4/4"
+
+[connection signal="group_muted" from="." to="." method="_on_group_muted"]
+[connection signal="group_unmuted" from="." to="." method="_on_group_unmuted"]
+[connection signal="stream_muted" from="." to="." method="_on_stream_muted"]
+[connection signal="stream_unmuted" from="." to="." method="_on_stream_unmuted"]
