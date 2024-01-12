@@ -326,7 +326,6 @@ func fade_group(vol_linear: float, group: String, fade_override: float = -1.0):
 	
 		for stream in groups[group].streams:
 			update_stream_mute(vol_linear, stream.name)
-			print(fade_override)
 			group_tween.tween_method(interpolate_vol.bind(stream, 1), groups[group].vol, vol_linear, playlist_data.fade_length if fade_override<0.0 else fade_override)
 		await group_tween.finished
 	return
@@ -383,7 +382,6 @@ func update_playlist_mute(vol_linear: float):
 
 # Vertical Remixing
 func set_v_state(new_state: String, fade_override: float = -1.0):
-	print("set v state: ", new_state, ", ", fade_override)
 	if new_state in v_states:
 		if not v_states[new_state].add_only:
 			for group in groups:
@@ -659,7 +657,6 @@ func _on_song_progress_drag_started():
 		
 	await song_progress.drag_ended
 	if was_playing:
-		print(song_progress.value, " ", playlist_data.end_time)
 		play(song_progress.value)
 	else:
 		sec_position = song_progress.value
@@ -668,21 +665,21 @@ func _on_song_progress_drag_started():
 
 func _on_stream_muted(stream_name):
 	print("stream muted: ", stream_name)
-	stream_toggles[stream_name].button_pressed = false
+	stream_toggles[stream_name].set_pressed_no_signal(false)
 	pass # Replace with function body.
 
 func _on_stream_unmuted(stream_name):
 	print("stream unmuted: ", stream_name)
-	stream_toggles[stream_name].button_pressed = true
+	stream_toggles[stream_name].set_pressed_no_signal(true)
 	pass # Replace with function body.
 
 func _on_group_muted(group_name):
 	if group_name=="": return
 	print("group muted: ", group_name)
-	group_toggles[group_name].button_pressed = false
+	group_toggles[group_name].set_pressed_no_signal(false)
 	pass # Replace with function body.
 
 func _on_group_unmuted(group_name):
 	print("group unmuted: ", group_name)
-	group_toggles[group_name].button_pressed = true
+	group_toggles[group_name].set_pressed_no_signal(true)
 	pass # Replace with function body.
