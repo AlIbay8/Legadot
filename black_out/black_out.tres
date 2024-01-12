@@ -18,16 +18,6 @@ group = "instruments"
 queueable = false
 allow_dupes = false
 
-[sub_resource type="Resource" id="Resource_b5d0r"]
-script = ExtResource("2_yuxgu")
-name = "bass"
-audio_stream = ExtResource("4_ldu7u")
-time = 0.0
-vol = 0.5
-group = "bass"
-queueable = false
-allow_dupes = false
-
 [sub_resource type="Resource" id="Resource_i1xmf"]
 script = ExtResource("2_yuxgu")
 name = "drums"
@@ -35,6 +25,16 @@ audio_stream = ExtResource("5_hb0dx")
 time = 0.0
 vol = 0.5
 group = "drums"
+queueable = false
+allow_dupes = false
+
+[sub_resource type="Resource" id="Resource_b5d0r"]
+script = ExtResource("2_yuxgu")
+name = "bass"
+audio_stream = ExtResource("4_ldu7u")
+time = 0.0
+vol = 0.5
+group = "bass"
 queueable = false
 allow_dupes = false
 
@@ -81,7 +81,7 @@ add_only = false
 [resource]
 script = ExtResource("1_8nnud")
 playlist_name = "black_out"
-streams = Array[ExtResource("2_yuxgu")]([SubResource("Resource_7joug"), SubResource("Resource_b5d0r"), SubResource("Resource_i1xmf"), SubResource("Resource_p6eug")])
+streams = Array[ExtResource("2_yuxgu")]([SubResource("Resource_7joug"), SubResource("Resource_i1xmf"), SubResource("Resource_b5d0r"), SubResource("Resource_p6eug")])
 end_time = 0.0
 loop = false
 loop_offset = 0.0

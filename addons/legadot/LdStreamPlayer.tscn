@@ -1,12 +1,12 @@
 [gd_scene load_steps=4 format=3 uid="uid://dxq2ex6wdqc1m"]
 
 [ext_resource type="Script" path="res://addons/legadot/LdStreamPlayer.gd" id="1_8g7yn"]
-[ext_resource type="Resource" uid="uid://cw6ucoxliw76c" path="res://love_song_of_new_century/love_song_of_new_century.tres" id="2_6j68v"]
+[ext_resource type="Resource" uid="uid://cwxl75pemnjov" path="res://test_playlist.tres" id="2_en2df"]
 [ext_resource type="PackedScene" uid="uid://d2p27dh50roqa" path="res://addons/legadot/scenes/debug_menu.tscn" id="10_dd3f8"]
 
 [node name="LdStreamPlayer" type="Node"]
 script = ExtResource("1_8g7yn")
-playlist_data = ExtResource("2_6j68v")
+playlist_data = ExtResource("2_en2df")
 auto_start = true
 h_state = "tutorial"
 

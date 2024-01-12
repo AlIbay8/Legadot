@@ -67,8 +67,8 @@ signal playlist_unmuted()
 @onready var vertical_option = $DebugMenu/MarginContainer/VBoxContainer/VerticalHorizontalControlsContainter/VerticalOption
 @onready var horizontal_option = $DebugMenu/MarginContainer/VBoxContainer/VerticalHorizontalControlsContainter/HorizontalOption
 @onready var beat_label = $DebugMenu/MarginContainer/VBoxContainer/BeatLabel
-@onready var queueables_container = $DebugMenu/MarginContainer/VBoxContainer/QueueablesContainer
-@onready var actions_container = $DebugMenu/MarginContainer/VBoxContainer/ActionsContainer
+@onready var queueables_container = $DebugMenu/MarginContainer/VBoxContainer/QueueablesContainer/QueuablesScrollContainer/QueueablesList
+@onready var actions_container = $DebugMenu/MarginContainer/VBoxContainer/ActionsContainer/ActionsScrollContainer/ActionsList
 @onready var song_progress: HSlider = $DebugMenu/MarginContainer/VBoxContainer/SongControls/HBoxContainer/VBoxContainer/SongProgress
 @onready var time_label: Label = $DebugMenu/MarginContainer/VBoxContainer/TimeLabel
 @onready var streams_container: HBoxContainer = $DebugMenu/MarginContainer/VBoxContainer/StreamControls/StreamsScrollContainer/StreamsContainer
