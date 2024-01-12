@@ -1,0 +1,107 @@
+[gd_resource type="Resource" script_class="LdPlaylistData" load_steps=19 format=3 uid="uid://cw6ucoxliw76c"]
+
+[ext_resource type="Script" path="res://addons/legadot/data_containers/LdBpmData.gd" id="1_ujuhp"]
+[ext_resource type="Script" path="res://addons/legadot/data_containers/LdPlaylistData.gd" id="2_opwcb"]
+[ext_resource type="AudioStream" uid="uid://7ejf852r6f5c" path="res://love_song_of_new_century/love-song-of-new-century_demucs4-ht_other_[mvsep.com].wav" id="2_s2inr"]
+[ext_resource type="AudioStream" uid="uid://ccj0kc73ycfvw" path="res://love_song_of_new_century/love-song-of-new-century_demucs4-ht_drums_[mvsep.com].wav" id="4_0vkjf"]
+[ext_resource type="Script" path="res://addons/legadot/data_containers/LdStreamData.gd" id="4_ig50a"]
+[ext_resource type="AudioStream" uid="uid://x6yforw4v5bq" path="res://love_song_of_new_century/love-song-of-new-century_demucs4-ht_bass_[mvsep.com].wav" id="5_j0xwb"]
+[ext_resource type="AudioStream" uid="uid://bkhesu1a14nuq" path="res://love_song_of_new_century/love-song-of-new-century_demucs4-ht_vocals_[mvsep.com].wav" id="6_4bgpp"]
+[ext_resource type="Script" path="res://addons/legadot/data_containers/LdVerticalStateData.gd" id="8_jhiq2"]
+
+[sub_resource type="Resource" id="Resource_vjlcp"]
+script = ExtResource("1_ujuhp")
+time = 0.742
+bpm = 120.0
+constant = true
+beats_in_measure = 4
+beat_value = 4
+
+[sub_resource type="Resource" id="Resource_ilnj4"]
+script = ExtResource("4_ig50a")
+name = "instruments"
+audio_stream = ExtResource("2_s2inr")
+time = 0.0
+vol = 1.0
+group = "instruments"
+queueable = false
+allow_dupes = false
+
+[sub_resource type="Resource" id="Resource_oavdq"]
+script = ExtResource("4_ig50a")
+name = "drums"
+audio_stream = ExtResource("4_0vkjf")
+time = 0.0
+vol = 1.0
+group = "drums"
+queueable = false
+allow_dupes = false
+
+[sub_resource type="Resource" id="Resource_l7d1o"]
+script = ExtResource("4_ig50a")
+name = "bass"
+audio_stream = ExtResource("5_j0xwb")
+time = 0.0
+vol = 1.0
+group = "bass"
+queueable = false
+allow_dupes = false
+
+[sub_resource type="Resource" id="Resource_j867b"]
+script = ExtResource("4_ig50a")
+name = "vocals"
+audio_stream = ExtResource("6_4bgpp")
+time = 0.0
+vol = 1.0
+group = "vocals"
+queueable = false
+allow_dupes = false
+
+[sub_resource type="Resource" id="Resource_dnbwv"]
+script = ExtResource("8_jhiq2")
+state_name = "instruments"
+groups = Array[String](["instruments"])
+add_only = true
+
+[sub_resource type="Resource" id="Resource_y4ocr"]
+script = ExtResource("8_jhiq2")
+state_name = "drums"
+groups = Array[String](["drums"])
+add_only = true
+
+[sub_resource type="Resource" id="Resource_b6hra"]
+script = ExtResource("8_jhiq2")
+state_name = "bass"
+groups = Array[String](["bass"])
+add_only = true
+
+[sub_resource type="Resource" id="Resource_ddds6"]
+script = ExtResource("8_jhiq2")
+state_name = "vocals"
+groups = Array[String](["vocals"])
+add_only = true
+
+[sub_resource type="Resource" id="Resource_bwagi"]
+script = ExtResource("8_jhiq2")
+state_name = "default"
+groups = Array[String](["drums", "bass", "instruments"])
+add_only = false
+
+[resource]
+script = ExtResource("2_opwcb")
+playlist_name = "love_song_of_new_century"
+streams = Array[ExtResource("4_ig50a")]([SubResource("Resource_ilnj4"), SubResource("Resource_oavdq"), SubResource("Resource_l7d1o"), SubResource("Resource_j867b")])
+end_time = 0.0
+loop = false
+loop_offset = 0.0
+vertical_states = Array[ExtResource("8_jhiq2")]([SubResource("Resource_dnbwv"), SubResource("Resource_y4ocr"), SubResource("Resource_b6hra"), SubResource("Resource_ddds6"), SubResource("Resource_bwagi")])
+fade_length = 2.055
+sections = Array[Resource("res://addons/legadot/data_containers/LdSectionData.gd")]([])
+transitions = Array[Resource("res://addons/legadot/data_containers/LdTransitionData.gd")]([])
+bpm_times = Array[ExtResource("1_ujuhp")]([SubResource("Resource_vjlcp")])
+count_subdivision = 1
+events = Array[Resource("res://addons/legadot/data_containers/LdEventData.gd")]([])
+action_sets = Array[Resource("res://addons/legadot/data_containers/actions/LdActionSet.gd")]([])
+default_v_state = "default"
+default_h_state = ""
+max_playlist_vol = 0.45

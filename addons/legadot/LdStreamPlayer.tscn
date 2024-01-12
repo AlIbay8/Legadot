@@ -1,20 +1,16 @@
 [gd_scene load_steps=4 format=3 uid="uid://dxq2ex6wdqc1m"]
 
 [ext_resource type="Script" path="res://addons/legadot/LdStreamPlayer.gd" id="1_8g7yn"]
-[ext_resource type="Resource" uid="uid://b35umbecbot4b" path="res://well_then_see_you_again_tomorrow/well_then_see_you_again_tomorrow.tres" id="2_e30kq"]
+[ext_resource type="Resource" uid="uid://cw6ucoxliw76c" path="res://love_song_of_new_century/love_song_of_new_century.tres" id="2_6j68v"]
 [ext_resource type="PackedScene" uid="uid://d2p27dh50roqa" path="res://addons/legadot/scenes/debug_menu.tscn" id="10_dd3f8"]
 
 [node name="LdStreamPlayer" type="Node"]
 script = ExtResource("1_8g7yn")
-playlist_data = ExtResource("2_e30kq")
+playlist_data = ExtResource("2_6j68v")
 auto_start = true
 h_state = "tutorial"
 
 [node name="DebugMenu" parent="." instance=ExtResource("10_dd3f8")]
-
-[node name="CheckButton" type="CheckButton" parent="."]
-offset_right = 44.0
-offset_bottom = 24.0
 
 [connection signal="group_muted" from="." to="." method="_on_group_muted"]
 [connection signal="group_unmuted" from="." to="." method="_on_group_unmuted"]

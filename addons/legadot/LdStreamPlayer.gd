@@ -34,16 +34,8 @@ var playlist_vol: float = 1.0
 
 @export var auto_start: bool = false
 
-@export var v_state: String:
-	set(state):
-		if state in v_states:
-			print("v state changed")
-			set_v_state(state)
-		
-@export var h_state: String:
-	set(state):
-		if state in h_sections:
-			h_state = state
+@export var v_state: String
+@export var h_state: String
 
 var tracker_timer: Timer
 var longest_time: float = 0.0
@@ -111,11 +103,11 @@ func init_playlist():
 		build_h_sections()
 		build_bpm()
 		build_action_sets()
-		
 		prepare_debug()
 		
 		if playlist_data.default_v_state!="":
 			print("set default v state")
+			v_state=playlist_data.default_v_state
 			set_v_state(playlist_data.default_v_state,0.0)
 		else:
 			for group in groups:
@@ -325,7 +317,7 @@ func fade_group(vol_linear: float, group: String, fade_override: float = -1.0):
 		group_tween.set_parallel(true)
 	
 		for stream in groups[group].streams:
-			update_stream_mute(vol_linear, stream.name)
+			#update_stream_mute(vol_linear, stream.name)
 			group_tween.tween_method(interpolate_vol.bind(stream, 1), groups[group].vol, vol_linear, playlist_data.fade_length if fade_override<0.0 else fade_override)
 		await group_tween.finished
 	return
@@ -387,7 +379,10 @@ func set_v_state(new_state: String, fade_override: float = -1.0):
 			for group in groups:
 				fade_group(0.0, group, fade_override)
 		for group in v_states[new_state].groups:
-			fade_group(1.0, group, fade_override)
+			if group in groups:
+				fade_group(1.0, group, fade_override)
+			else:
+				fade_stream(1.0, group, fade_override)
 		await get_tree().create_timer(playlist_data.fade_length if fade_override<0.0 else fade_override).timeout
 	return
 
