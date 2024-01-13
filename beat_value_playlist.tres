@@ -1,7 +1,7 @@
 [gd_resource type="Resource" script_class="LdPlaylistData" load_steps=5 format=3 uid="uid://636xn5mftkro"]
 
-[ext_resource type="Script" path="res://Legadot/data_containers/LdBpmData.gd" id="1_76emj"]
-[ext_resource type="Script" path="res://Legadot/data_containers/LdPlaylistData.gd" id="2_4c0wi"]
+[ext_resource type="Script" path="res://addons/legadot/data_containers/LdBpmData.gd" id="1_76emj"]
+[ext_resource type="Script" path="res://addons/legadot/data_containers/LdPlaylistData.gd" id="2_4c0wi"]
 
 [sub_resource type="Resource" id="Resource_7vhjf"]
 script = ExtResource("1_76emj")
@@ -22,16 +22,18 @@ beat_value = 16
 [resource]
 script = ExtResource("2_4c0wi")
 playlist_name = "beat_value_playlist"
-streams = Array[Resource("res://Legadot/data_containers/LdStreamData.gd")]([])
-bpm_times = Array[ExtResource("1_76emj")]([SubResource("Resource_7vhjf"), SubResource("Resource_mvjqq")])
+streams = Array[Resource("res://addons/legadot/data_containers/LdStreamData.gd")]([])
 end_time = 0.0
 loop = false
 loop_offset = 0.0
-vertical_states = Array[Resource("res://Legadot/data_containers/LdVerticalStateData.gd")]([])
+vertical_states = Array[Resource("res://addons/legadot/data_containers/LdVerticalStateData.gd")]([])
 fade_length = 0.0
-sections = Array[Resource("res://Legadot/data_containers/LdSectionData.gd")]([])
-transitions = Array[Resource("res://Legadot/data_containers/LdTransitionData.gd")]([])
+sections = Array[Resource("res://addons/legadot/data_containers/LdSectionData.gd")]([])
+transitions = Array[Resource("res://addons/legadot/data_containers/LdTransitionData.gd")]([])
+bpm_times = Array[ExtResource("1_76emj")]([SubResource("Resource_7vhjf"), SubResource("Resource_mvjqq")])
 count_subdivision = 1
-events = Array[Resource("res://Legadot/data_containers/LdEventData.gd")]([])
+events = Array[Resource("res://addons/legadot/data_containers/LdEventData.gd")]([])
+action_sets = Array[Resource("res://addons/legadot/data_containers/actions/LdActionSet.gd")]([])
 default_v_state = ""
 default_h_state = ""
+max_playlist_vol = 1.0

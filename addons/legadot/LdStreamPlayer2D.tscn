@@ -1,0 +1,16 @@
+[gd_scene load_steps=4 format=3 uid="uid://d2wsppiun6f1a"]
+
+[ext_resource type="Script" path="res://addons/legadot/LdStreamPlayer2D.gd" id="1_11h7f"]
+[ext_resource type="Resource" uid="uid://busknx7fgmyl1" path="res://quake_playlist.tres" id="2_m6qof"]
+[ext_resource type="PackedScene" uid="uid://d2p27dh50roqa" path="res://addons/legadot/scenes/debug_menu.tscn" id="3_ncmy0"]
+
+[node name="LdStreamPlayer2D" type="Node2D"]
+script = ExtResource("1_11h7f")
+playlist_data = ExtResource("2_m6qof")
+auto_start = true
+
+[node name="StreamPlayers" type="Node2D" parent="."]
+
+[node name="Timers" type="Node" parent="."]
+
+[node name="DebugMenu" parent="." instance=ExtResource("3_ncmy0")]
