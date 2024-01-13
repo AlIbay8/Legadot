@@ -60,6 +60,7 @@ signal group_unmuted(group_name: String)
 signal playlist_unmuted()
 
 #@export_category("Debug")
+@onready var debug_menu = $DebugMenu
 @onready var debug_label = $DebugMenu/MarginContainer/VBoxContainer/DebugLabel
 @onready var play_button = $DebugMenu/MarginContainer/VBoxContainer/SongControls/PlayButton
 @onready var pause_button = $DebugMenu/MarginContainer/VBoxContainer/SongControls/PauseButton
@@ -103,7 +104,9 @@ func init_playlist():
 		build_h_sections()
 		build_bpm()
 		build_action_sets()
-		prepare_debug()
+		#prepare_debug()
+		if debug_menu:
+			debug_menu.init_debug_menu()
 		
 		if playlist_data.default_v_state!="":
 			print("set default v state")
@@ -350,17 +353,26 @@ func update_stream_mute(vol_linear: float, stream_name: String):
 	if vol_linear==0.0:
 		unmuted_streams.erase(stream_name)
 		self.stream_muted.emit(stream_name)
+		if debug_menu and stream_name in debug_menu.stream_toggles:
+			debug_menu.stream_toggles[stream_name].set_pressed_no_signal(false)
 	elif vol_linear>0.0 and not unmuted_streams.has(stream_name):
 		unmuted_streams.append(stream_name)
 		self.stream_unmuted.emit(stream_name)
+		if debug_menu and stream_name in debug_menu.stream_toggles:
+			debug_menu.stream_toggles[stream_name].set_pressed_no_signal(true)
+		
 
 func update_group_mute(vol_linear: float, group_name: String):
 	if vol_linear==0.0:
 		unmuted_groups.erase(group_name)
 		self.group_muted.emit(group_name)
+		if debug_menu and group_name in debug_menu.group_toggles:
+			debug_menu.group_toggles[group_name].set_pressed_no_signal(false)
 	elif vol_linear>0.0 and not unmuted_groups.has(group_name):
 		unmuted_groups.append(group_name)
 		self.group_unmuted.emit(group_name)
+		if debug_menu and group_name in debug_menu.group_toggles:
+			debug_menu.group_toggles[group_name].set_pressed_no_signal(true)
 
 func update_playlist_mute(vol_linear: float):
 	if vol_linear==0.0:
@@ -660,21 +672,25 @@ func _on_song_progress_drag_started():
 
 func _on_stream_muted(stream_name):
 	print("stream muted: ", stream_name)
-	stream_toggles[stream_name].set_pressed_no_signal(false)
+	if stream_name in stream_toggles:
+		stream_toggles[stream_name].set_pressed_no_signal(false)
 	pass # Replace with function body.
 
 func _on_stream_unmuted(stream_name):
 	print("stream unmuted: ", stream_name)
-	stream_toggles[stream_name].set_pressed_no_signal(true)
+	if stream_name in stream_toggles:
+		stream_toggles[stream_name].set_pressed_no_signal(true)
 	pass # Replace with function body.
 
 func _on_group_muted(group_name):
 	if group_name=="": return
 	print("group muted: ", group_name)
-	group_toggles[group_name].set_pressed_no_signal(false)
+	if group_name in group_toggles:
+		group_toggles[group_name].set_pressed_no_signal(false)
 	pass # Replace with function body.
 
 func _on_group_unmuted(group_name):
 	print("group unmuted: ", group_name)
-	group_toggles[group_name].set_pressed_no_signal(true)
+	if group_name in group_toggles:
+		group_toggles[group_name].set_pressed_no_signal(true)
 	pass # Replace with function body.

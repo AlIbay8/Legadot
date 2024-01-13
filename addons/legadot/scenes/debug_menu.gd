@@ -60,6 +60,7 @@ func init_stream_toggles(stream_data: Dictionary):
 		btn.text = stream
 		btn.set_pressed_no_signal(true)
 		btn.toggled.connect(func(button_pressed:bool): stream_toggled.emit(stream,button_pressed))
+		stream_toggled.connect(func(stream, active): ld_player.fade_stream(1.0 if active else 0.0, stream))
 		stream_toggles[stream] = btn
 		streams_container.add_child(btn)
 
@@ -70,6 +71,7 @@ func init_group_toggles(group_data: Dictionary):
 		btn.text = group
 		btn.set_pressed_no_signal(false)
 		btn.toggled.connect(func(button_pressed:bool): group_toggled.emit(group,button_pressed))
+		group_toggled.connect(func(group, active): ld_player.fade_group(1.0 if active else 0.0, group))
 		group_toggles[group] = btn
 		groups_container.add_child(btn)
 
@@ -80,6 +82,7 @@ func init_queueables(stream_data: Dictionary):
 			btn.text = s
 			queueables_list.add_child(btn)
 			btn.pressed.connect(func(): queueable_pressed.emit(s))
+	queueable_pressed.connect(ld_player.play_queueable.bind(1.0/ld_player.playlist_data.count_subdivision))
 
 func init_actions(action_set_data):
 	for a in action_set_data:
@@ -87,6 +90,7 @@ func init_actions(action_set_data):
 		btn.text = a
 		actions_list.add_child(btn)
 		btn.pressed.connect(func(): action_pressed.emit(a))
+	action_pressed.connect(ld_player.start_action_set)
 
 func time_convert(time_in_sec: float):
 	var milliseconds = int(fmod(time_in_sec, 1.0)*100)
@@ -96,3 +100,7 @@ func time_convert(time_in_sec: float):
 	#returns a string with the format "MM:SS.MS"
 	return "%02d:%02d.%02d" % [minutes, seconds, milliseconds]
 
+
+func _on_stream_toggled(stream, button_pressed):
+	print(stream, ", ", button_pressed)
+	pass # Replace with function body.
