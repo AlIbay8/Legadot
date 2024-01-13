@@ -158,3 +158,10 @@ vertical_scroll_mode = 0
 [node name="ActionsList" type="HBoxContainer" parent="MarginContainer/VBoxContainer/ActionsContainer/ActionsScrollContainer"]
 layout_mode = 2
 size_flags_vertical = 3
+
+[connection signal="pressed" from="MarginContainer/VBoxContainer/SongControls/PlayButton" to="." method="_on_play_button_pressed"]
+[connection signal="pressed" from="MarginContainer/VBoxContainer/SongControls/PauseButton" to="." method="_on_pause_button_pressed"]
+[connection signal="pressed" from="MarginContainer/VBoxContainer/SongControls/StopButton" to="." method="_on_stop_button_pressed"]
+[connection signal="drag_started" from="MarginContainer/VBoxContainer/SongControls/HBoxContainer/VBoxContainer/SongProgress" to="." method="_on_song_progress_drag_started"]
+[connection signal="item_selected" from="MarginContainer/VBoxContainer/VerticalHorizontalControlsContainter/VerticalOption" to="." method="_on_vertical_option_item_selected"]
+[connection signal="item_selected" from="MarginContainer/VBoxContainer/VerticalHorizontalControlsContainter/HorizontalOption" to="." method="_on_horizontal_option_item_selected"]

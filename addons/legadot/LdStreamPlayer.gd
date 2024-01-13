@@ -59,28 +59,27 @@ signal stream_unmuted(stream_name: String)
 signal group_unmuted(group_name: String)
 signal playlist_unmuted()
 
-#@export_category("Debug")
-@onready var debug_menu = $DebugMenu
-@onready var debug_label = $DebugMenu/MarginContainer/VBoxContainer/DebugLabel
-@onready var play_button = $DebugMenu/MarginContainer/VBoxContainer/SongControls/PlayButton
-@onready var pause_button = $DebugMenu/MarginContainer/VBoxContainer/SongControls/PauseButton
-@onready var stop_button = $DebugMenu/MarginContainer/VBoxContainer/SongControls/StopButton
-@onready var vertical_option = $DebugMenu/MarginContainer/VBoxContainer/VerticalHorizontalControlsContainter/VerticalOption
-@onready var horizontal_option = $DebugMenu/MarginContainer/VBoxContainer/VerticalHorizontalControlsContainter/HorizontalOption
-@onready var beat_label = $DebugMenu/MarginContainer/VBoxContainer/BeatLabel
-@onready var queueables_container = $DebugMenu/MarginContainer/VBoxContainer/QueueablesContainer/QueuablesScrollContainer/QueueablesList
-@onready var actions_container = $DebugMenu/MarginContainer/VBoxContainer/ActionsContainer/ActionsScrollContainer/ActionsList
-@onready var song_progress: HSlider = $DebugMenu/MarginContainer/VBoxContainer/SongControls/HBoxContainer/VBoxContainer/SongProgress
-@onready var time_label: Label = $DebugMenu/MarginContainer/VBoxContainer/TimeLabel
-@onready var streams_container: HBoxContainer = $DebugMenu/MarginContainer/VBoxContainer/StreamControls/StreamsScrollContainer/StreamsContainer
-@onready var groups_container: HBoxContainer = $DebugMenu/MarginContainer/VBoxContainer/GroupControls/GroupsScrollContainer/GroupsContainer
+@export_category("Debug")
+@export var show_debug_menu: bool = false
+@onready var debug_menu: LdDebugMenu = get_node_or_null("DebugMenu")
 var stream_toggles: Dictionary = {}
 var group_toggles: Dictionary = {}
 
 func _ready():
+	init_debug()
 	init_stream_players_node()
 	init_timers_node()
 	init_playlist()
+
+func init_debug():
+	if show_debug_menu:
+		if not debug_menu:
+			var debug_scene = load("res://addons/legadot/scenes/debug_menu.tscn")
+			debug_menu = debug_scene.instantiate()
+			add_child(debug_menu)
+	else:
+		if debug_menu:
+			debug_menu.queue_free()
 
 func init_stream_players_node():
 	var stream_players_node: Node = Node.new()
@@ -112,6 +111,8 @@ func init_playlist():
 			print("set default v state")
 			v_state=playlist_data.default_v_state
 			set_v_state(playlist_data.default_v_state,0.0)
+			if debug_menu:
+				debug_menu.v_select(v_state)
 		else:
 			for group in groups:
 				update_group_mute(groups[group].vol, group)
@@ -121,6 +122,8 @@ func init_playlist():
 		
 		if playlist_data.default_h_state!="":
 			h_state = playlist_data.default_h_state
+			if debug_menu:
+				debug_menu.h_select(h_state)
 			await get_tree().create_timer(0.25).timeout
 			set_h_state(playlist_data.default_h_state, auto_start)
 		else:
@@ -219,8 +222,8 @@ func build_timeline():
 		end = playlist_data.end_time
 		if not (end in timeline):
 			timeline[end] = LdTimelineEvent.new(end)
-	if song_progress:
-		song_progress.max_value = end
+	if debug_menu:
+		debug_menu.song_progress.max_value = end
 	#print("end time: ", end, ", ", playlist_data.end_time)
 
 func assign_timers():
@@ -496,17 +499,12 @@ func _physics_process(delta):
 		beat_position = floor(get_beats_since_sect(sec_position))/playlist_data.count_subdivision
 		report_beat()
 		
-		update_debug()
-
-func update_debug():
-	if song_progress:
-		song_progress.value = sec_position
-	if time_label:
-		time_label.text = time_convert(sec_position)
 
 func report_beat():
 	if last_reported_beat!=beat_position:
-		debug_label.text = current_section + ", " + str(beat_position)
+		#debug_label.text = current_section + ", " + str(beat_position)
+		if debug_menu:
+			debug_menu.set_debug_label(current_section, beat_position)
 		
 		if fmod(beat_position,current_beats_in_measure)==1.0: # <-- 4 = beats in meaure
 			total_measures+=1
@@ -515,7 +513,10 @@ func report_beat():
 			self.quarter_beat.emit(beat_position)
 		if fmod(beat_position,0.5)==0.0 and playlist_data.count_subdivision>=2:
 			self.eighth_beat.emit(beat_position) 
-		beat_label.text = "Measure, Beat, Time Signature: {msr}, {bt}, {bim}/{bv}".format({"msr": total_measures, "bt": fmod(beat_position-1,current_beats_in_measure)+1, "bim": current_beats_in_measure, "bv":current_beat_value})
+		
+		if debug_menu:
+			debug_menu.set_beat_label(total_measures, fmod(beat_position-1,current_beats_in_measure)+1, current_beats_in_measure, current_beat_value)
+			#beat_label.text = "Measure, Beat, Time Signature: {msr}, {bt}, {bim}/{bv}".format({"msr": total_measures, "bt": fmod(beat_position-1,current_beats_in_measure)+1, "bim": current_beats_in_measure, "bv":current_beat_value})
 		last_reported_beat = beat_position
 
 func wait_for_beat(beat: float = 1.0):
@@ -562,113 +563,6 @@ func check_end(time_check: float):
 
 func start_action_set(action_set_name: String):
 	action_sets[action_set_name].trigger_actions(self)
-
-func prepare_debug():
-	play_button.pressed.connect(_on_play_button_pressed)
-	pause_button.pressed.connect(_on_pause_button_pressed)
-	stop_button.pressed.connect(_on_stop_button_pressed)
-	vertical_option.item_selected.connect(_on_vertical_option_item_selected)
-	horizontal_option.item_selected.connect(_on_horizontal_option_item_selected)
-	song_progress.drag_started.connect(_on_song_progress_drag_started)
-	init_vertical()
-	init_horizontal()
-	init_stream_toggles()
-	init_group_toggles()
-	init_queueables()
-	init_actions()
-
-func init_vertical():
-	vertical_option.clear()
-	var i: int = 0
-	for v in v_states:
-		vertical_option.add_item(v)
-		if v==v_state:
-			vertical_option.select(i)
-		i+=1
-
-func init_horizontal():
-	horizontal_option.clear()
-	var i: int = 0
-	for h in h_sections:
-		horizontal_option.add_item(h)
-		if h==h_state:
-			horizontal_option.select(i)
-		i+=1
-
-func init_stream_toggles():
-	for stream in stream_data:
-		var btn: CheckButton = CheckButton.new()
-		btn.text = stream
-		btn.set_pressed_no_signal(true)
-		btn.toggled.connect(func(button_pressed:bool): fade_stream(1.0 if button_pressed else 0.0, stream))
-		stream_toggles[stream] = btn
-		streams_container.add_child(btn)
-
-func init_group_toggles():
-	for group in groups:
-		if group=="": continue
-		var btn: CheckButton = CheckButton.new()
-		btn.text = group
-		btn.set_pressed_no_signal(false)
-		btn.toggled.connect(func(button_pressed:bool): fade_group(1.0 if button_pressed else 0.0, group))
-		group_toggles[group] = btn
-		groups_container.add_child(btn)
-
-func init_queueables():
-	for s in stream_data:
-		if stream_data[s].queueable:
-			var btn: Button = Button.new()
-			btn.text = s
-			queueables_container.add_child(btn)
-			btn.pressed.connect(play_queueable.bind(s, 1.0/playlist_data.count_subdivision))
-
-func init_actions():
-	for a in action_sets:
-		var btn: Button = Button.new()
-		btn.text = a
-		actions_container.add_child(btn)
-		btn.pressed.connect(start_action_set.bind(a))
-
-func time_convert(time_in_sec: float):
-	var milliseconds = int(fmod(time_in_sec, 1.0)*100)
-	var seconds = int(time_in_sec)%60
-	var minutes = int(int(time_in_sec)/60.0)%60
-	
-	#returns a string with the format "MM:SS.MS"
-	return "%02d:%02d.%02d" % [minutes, seconds, milliseconds]
-
-func _on_play_button_pressed():
-	if is_playing:
-		play(0.0)
-	else:
-		play(sec_position)
-
-func _on_pause_button_pressed():
-	pause()
-
-func _on_stop_button_pressed():
-	stop()
-	update_debug()
-
-func _on_vertical_option_item_selected(index):
-	set_v_state(vertical_option.get_item_text(index))
-
-func _on_horizontal_option_item_selected(index):
-	set_h_state(horizontal_option.get_item_text(index))
-
-func _on_song_progress_drag_started():
-	var was_playing: bool = false
-	if is_playing:
-		was_playing = true
-		pause()
-		
-	await song_progress.drag_ended
-	if was_playing:
-		play(song_progress.value)
-	else:
-		sec_position = song_progress.value
-		if time_label:
-			time_label.text = time_convert(sec_position)
 
 func _on_stream_muted(stream_name):
 	print("stream muted: ", stream_name)

@@ -24,6 +24,10 @@ driver/mix_rate.web=44100
 window/stretch/mode="canvas_items"
 window/stretch/aspect="expand"
 
+[editor_plugins]
+
+enabled=PackedStringArray("res://addons/legadot/plugin.cfg")
+
 [input]
 
 debug1={
