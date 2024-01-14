@@ -45,7 +45,6 @@ func _ready():
 func _physics_process(_delta):
 	if ld_player and ld_player.is_playing:
 		update_time()
-	pass
 
 func init_debug_menu():
 	if ld_player:
@@ -107,7 +106,6 @@ func init_actions(action_set_data):
 	action_pressed.connect(ld_player.start_action_set)
 
 func v_select(v_state: String):
-	print(v_state)
 	if v_state in vertical_states:
 		vertical_option.select(vertical_states.find(v_state))
 
@@ -168,7 +166,6 @@ func _on_song_progress_drag_started():
 			time_label.text = time_convert(ld_player.sec_position)
 
 func _on_vertical_option_item_selected(index):
-	print("v pressed")
 	v_changed.emit(vertical_option.get_item_text(index))
 	ld_player.set_v_state(vertical_option.get_item_text(index))
 
