@@ -156,6 +156,7 @@ func get_player_template():
 	for child in self.get_children():
 		if child is AudioStreamPlayer:
 			player_node = child.duplicate()
+			child.queue_free()
 			break
 	return player_node
 

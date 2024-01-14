@@ -8,3 +8,6 @@ script = ExtResource("1_cpgr7")
 playlist_data = ExtResource("2_e6b6j")
 auto_start = true
 show_debug_menu = true
+
+[node name="AudioStreamPlayer" type="AudioStreamPlayer" parent="."]
+bus = &"Music"
