@@ -42,7 +42,7 @@ func _ready():
 		ld_player = parent
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
-func _process(delta):
+func _physics_process(_delta):
 	if ld_player and ld_player.is_playing:
 		update_time()
 	pass

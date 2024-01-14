@@ -19,6 +19,10 @@ config/icon="res://icon.svg"
 
 driver/mix_rate.web=44100
 
+[autoload]
+
+Legadot="*res://addons/legadot/global/LdManager.gd"
+
 [display]
 
 window/stretch/mode="canvas_items"

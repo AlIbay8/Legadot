@@ -65,6 +65,12 @@ signal playlist_unmuted()
 @onready var debug_menu: LdDebugMenu = get_node_or_null("DebugMenu")
 
 func _ready():
+	if Legadot and playlist_data:
+		if playlist_data.playlist_name!="":
+			Legadot.add_playlist(playlist_data.playlist_name, self)
+		else:
+			Legadot.add_playlist(self.name, self)
+		self.tree_exiting.connect(remove_self)
 	init_debug()
 	init_stream_players_node()
 	init_timers_node()
@@ -279,7 +285,9 @@ func play_from_sect(sect: String):
 			play(h_sections[sect])
 
 func stop(seek_stop: bool = false, reset_pos: bool = true):
-	if reset_pos: sec_position = 0
+	if reset_pos: 
+		sec_position = 0
+		last_reported_beat = 0
 	is_playing = false
 	for timer in timers.get_children():
 		timer.stop()
@@ -556,3 +564,10 @@ func check_end(time_check: float):
 
 func start_action_set(action_set_name: String):
 	action_sets[action_set_name].trigger_actions(self)
+
+func remove_self():
+	if Legadot:
+		if playlist_data and playlist_data.playlist_name:
+			Legadot.remove_playlist(playlist_data.playlist_name)
+		else:
+			Legadot.remove_playlist(self.name)
