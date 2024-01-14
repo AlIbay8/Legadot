@@ -19,6 +19,7 @@ var action_sets: Dictionary = {}
 var is_playing: bool = false
 var start_position: float = 0.0
 var sec_position: float = 0.0
+var raw_beat_position: float
 var beat_position: float = 0
 var last_reported_beat: float = 0
 var current_section: String = "":
@@ -62,8 +63,6 @@ signal playlist_unmuted()
 @export_category("Debug")
 @export var show_debug_menu: bool = false
 @onready var debug_menu: LdDebugMenu = get_node_or_null("DebugMenu")
-var stream_toggles: Dictionary = {}
-var group_toggles: Dictionary = {}
 
 func _ready():
 	init_debug()
@@ -80,6 +79,7 @@ func init_debug():
 	else:
 		if debug_menu:
 			debug_menu.queue_free()
+		debug_menu = null
 
 func init_stream_players_node():
 	var stream_players_node: Node = Node.new()
@@ -103,16 +103,12 @@ func init_playlist():
 		build_h_sections()
 		build_bpm()
 		build_action_sets()
-		#prepare_debug()
+
 		if debug_menu:
 			debug_menu.init_debug_menu()
 		
 		if playlist_data.default_v_state!="":
-			print("set default v state")
-			v_state=playlist_data.default_v_state
 			set_v_state(playlist_data.default_v_state,0.0)
-			if debug_menu:
-				debug_menu.v_select(v_state)
 		else:
 			for group in groups:
 				update_group_mute(groups[group].vol, group)
@@ -121,7 +117,6 @@ func init_playlist():
 			fade_playlist(1.0,false,0.0)
 		
 		if playlist_data.default_h_state!="":
-			h_state = playlist_data.default_h_state
 			if debug_menu:
 				debug_menu.h_select(h_state)
 			await get_tree().create_timer(0.25).timeout
@@ -224,7 +219,6 @@ func build_timeline():
 			timeline[end] = LdTimelineEvent.new(end)
 	if debug_menu:
 		debug_menu.song_progress.max_value = end
-	#print("end time: ", end, ", ", playlist_data.end_time)
 
 func assign_timers():
 	for e in timeline:
@@ -364,7 +358,6 @@ func update_stream_mute(vol_linear: float, stream_name: String):
 		if debug_menu and stream_name in debug_menu.stream_toggles:
 			debug_menu.stream_toggles[stream_name].set_pressed_no_signal(true)
 		
-
 func update_group_mute(vol_linear: float, group_name: String):
 	if vol_linear==0.0:
 		unmuted_groups.erase(group_name)
@@ -390,6 +383,9 @@ func update_playlist_mute(vol_linear: float):
 # Vertical Remixing
 func set_v_state(new_state: String, fade_override: float = -1.0):
 	if new_state in v_states:
+		v_state = new_state
+		if debug_menu:
+			debug_menu.v_select(new_state)
 		if not v_states[new_state].add_only:
 			for group in groups:
 				fade_group(0.0, group, fade_override)
@@ -427,6 +423,8 @@ func check_h_transition(transition: LdTransition) -> bool:
 
 func set_h_state(new_state: String, auto_play: bool = false):
 	h_state = new_state
+	if debug_menu:
+		debug_menu.h_select(new_state)
 	if auto_play:
 		play_from_sect(h_state)
 
@@ -454,9 +452,6 @@ func get_beats_since_sect(time: float) -> float:
 			var n_t: float = bpm_times[i-1 if (i-1)>=0 else i]
 			var c_b: float = bpms[c_t].bpm
 			var n_b: float = bpms[n_t].bpm if not bpms[c_t].constant else bpms[c_t].bpm
-			
-#			c_b/=(4.0/bpms[c_t].beat_value)
-#			n_b/=(4.0/bpms[n_t].beat_value)
 			
 			var dt: float = n_t-c_t if (n_t!=c_t) else 1.0
 			var db_dt: float = (n_b-c_b)/dt
@@ -496,13 +491,12 @@ func _physics_process(delta):
 		else:
 			sec_position+=delta
 		
+		raw_beat_position = get_beats_since_sect(sec_position)/playlist_data.count_subdivision
 		beat_position = floor(get_beats_since_sect(sec_position))/playlist_data.count_subdivision
 		report_beat()
-		
 
 func report_beat():
 	if last_reported_beat!=beat_position:
-		#debug_label.text = current_section + ", " + str(beat_position)
 		if debug_menu:
 			debug_menu.set_debug_label(current_section, beat_position)
 		
@@ -516,7 +510,6 @@ func report_beat():
 		
 		if debug_menu:
 			debug_menu.set_beat_label(total_measures, fmod(beat_position-1,current_beats_in_measure)+1, current_beats_in_measure, current_beat_value)
-			#beat_label.text = "Measure, Beat, Time Signature: {msr}, {bt}, {bim}/{bv}".format({"msr": total_measures, "bt": fmod(beat_position-1,current_beats_in_measure)+1, "bim": current_beats_in_measure, "bv":current_beat_value})
 		last_reported_beat = beat_position
 
 func wait_for_beat(beat: float = 1.0):
@@ -563,28 +556,3 @@ func check_end(time_check: float):
 
 func start_action_set(action_set_name: String):
 	action_sets[action_set_name].trigger_actions(self)
-
-func _on_stream_muted(stream_name):
-	print("stream muted: ", stream_name)
-	if stream_name in stream_toggles:
-		stream_toggles[stream_name].set_pressed_no_signal(false)
-	pass # Replace with function body.
-
-func _on_stream_unmuted(stream_name):
-	print("stream unmuted: ", stream_name)
-	if stream_name in stream_toggles:
-		stream_toggles[stream_name].set_pressed_no_signal(true)
-	pass # Replace with function body.
-
-func _on_group_muted(group_name):
-	if group_name=="": return
-	print("group muted: ", group_name)
-	if group_name in group_toggles:
-		group_toggles[group_name].set_pressed_no_signal(false)
-	pass # Replace with function body.
-
-func _on_group_unmuted(group_name):
-	print("group unmuted: ", group_name)
-	if group_name in group_toggles:
-		group_toggles[group_name].set_pressed_no_signal(true)
-	pass # Replace with function body.

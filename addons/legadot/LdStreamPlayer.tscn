@@ -1,16 +1,11 @@
 [gd_scene load_steps=3 format=3 uid="uid://dxq2ex6wdqc1m"]
 
 [ext_resource type="Script" path="res://addons/legadot/LdStreamPlayer.gd" id="1_8g7yn"]
-[ext_resource type="Resource" uid="uid://cwxl75pemnjov" path="res://test_playlist.tres" id="2_en2df"]
+[ext_resource type="Resource" uid="uid://b35umbecbot4b" path="res://well_then_see_you_again_tomorrow/well_then_see_you_again_tomorrow.tres" id="2_ck3eb"]
 
 [node name="LdStreamPlayer" type="Node"]
 script = ExtResource("1_8g7yn")
-playlist_data = ExtResource("2_en2df")
+playlist_data = ExtResource("2_ck3eb")
 auto_start = true
 h_state = "tutorial"
 show_debug_menu = true
-
-[connection signal="group_muted" from="." to="." method="_on_group_muted"]
-[connection signal="group_unmuted" from="." to="." method="_on_group_unmuted"]
-[connection signal="stream_muted" from="." to="." method="_on_stream_muted"]
-[connection signal="stream_unmuted" from="." to="." method="_on_stream_unmuted"]

@@ -16,7 +16,7 @@
 
 [sub_resource type="Resource" id="Resource_f5a1u"]
 script = ExtResource("1_fo633")
-section_name = "start,half"
+section_names = "start,half"
 fire_in_middle = false
 
 [sub_resource type="Resource" id="Resource_pisai"]

@@ -23,6 +23,8 @@ func trigger_event(playlist: LdStreamPlayer, offset: float = -1.0, check_end: bo
 		playlist.event_reached.emit(event.event_name)
 		if event.has_method("custom_event"):
 			event.custom_event(playlist)
+		if event.action_set:
+			event.action_set.trigger_actions(playlist)
 	if section!="":
 		playlist.current_section = section
 	if bpm:

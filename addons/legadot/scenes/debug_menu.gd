@@ -107,16 +107,17 @@ func init_actions(action_set_data):
 	action_pressed.connect(ld_player.start_action_set)
 
 func v_select(v_state: String):
+	print(v_state)
 	if v_state in vertical_states:
-		vertical_option.selected = vertical_states.find(v_state)
+		vertical_option.select(vertical_states.find(v_state))
 
 func h_select(h_state: String):
 	if h_state in horizontal_states:
-		horizontal_option.selected = horizontal_states.find(h_state)
+		horizontal_option.select(horizontal_states.find(h_state))
 
 func update_time():
 	if time_label:
-		time_label.text = time_convert(ld_player.sec_position)
+		time_label.text = time_convert(ld_player.sec_position) + ", " + str(ld_player.raw_beat_position)
 	if song_progress:
 		song_progress.value = ld_player.sec_position
 
@@ -167,6 +168,7 @@ func _on_song_progress_drag_started():
 			time_label.text = time_convert(ld_player.sec_position)
 
 func _on_vertical_option_item_selected(index):
+	print("v pressed")
 	v_changed.emit(vertical_option.get_item_text(index))
 	ld_player.set_v_state(vertical_option.get_item_text(index))
 
