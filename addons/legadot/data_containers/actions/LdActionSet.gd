@@ -22,7 +22,8 @@ func trigger_actions(ld_player: LdStreamPlayer):
 		ld_player.coroutine_password = 0.0
 
 func is_password_valid() -> bool:
-	if cancel_on_new_set and local_password == ld_stream_player.coroutine_password:
+	if not cancel_on_new_set: return true
+	if local_password == ld_stream_player.coroutine_password:
 		return true
 	else:
 		return false

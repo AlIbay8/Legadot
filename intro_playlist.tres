@@ -1,10 +1,21 @@
-[gd_resource type="Resource" script_class="LdPlaylistData" load_steps=10 format=3 uid="uid://ckc7xjpa5y2pq"]
+[gd_resource type="Resource" script_class="LdPlaylistData" load_steps=20 format=3 uid="uid://cl0tmt43mhf45"]
 
+[ext_resource type="Script" path="res://addons/legadot/data_containers/LdBpmData.gd" id="1_jugah"]
 [ext_resource type="Script" path="res://addons/legadot/data_containers/LdPlaylistData.gd" id="1_ngdp7"]
 [ext_resource type="Script" path="res://addons/legadot/data_containers/LdSectionData.gd" id="2_si6iq"]
-[ext_resource type="AudioStream" uid="uid://dswqw4l31lkuq" path="res://intro.ogg" id="3_l3uv6"]
 [ext_resource type="Script" path="res://addons/legadot/data_containers/LdStreamData.gd" id="4_60lgf"]
+[ext_resource type="AudioStream" uid="uid://dswqw4l31lkuq" path="res://intro.ogg" id="4_wk5o5"]
 [ext_resource type="Script" path="res://addons/legadot/data_containers/LdTransitionData.gd" id="5_u0atp"]
+[ext_resource type="AudioStream" uid="uid://ceg7siji8k2dw" path="res://intro_stinger_1.ogg" id="6_7xlrw"]
+[ext_resource type="AudioStream" uid="uid://x3weiwyh7mxh" path="res://intro_stinger_2.ogg" id="7_7tvk6"]
+
+[sub_resource type="Resource" id="Resource_vyc7j"]
+script = ExtResource("1_jugah")
+time = 0.0
+bpm = 120.0
+constant = true
+beats_in_measure = 4
+beat_value = 4
 
 [sub_resource type="Resource" id="Resource_fymly"]
 script = ExtResource("2_si6iq")
@@ -19,12 +30,56 @@ time = 76.0
 [sub_resource type="Resource" id="Resource_e5psg"]
 script = ExtResource("4_60lgf")
 name = "intro_song"
-audio_stream = ExtResource("3_l3uv6")
+audio_stream = ExtResource("4_wk5o5")
 time = 0.0
 vol = 1.0
 group = ""
 queueable = false
 allow_dupes = false
+
+[sub_resource type="Resource" id="Resource_n3vdr"]
+script = ExtResource("4_60lgf")
+name = "stinger_1"
+audio_stream = ExtResource("6_7xlrw")
+time = 0.0
+vol = 0.55
+group = ""
+queueable = true
+allow_dupes = false
+
+[sub_resource type="Resource" id="Resource_4b0ny"]
+script = ExtResource("4_60lgf")
+name = "stinger_2"
+audio_stream = ExtResource("7_7tvk6")
+time = 0.0
+vol = 0.55
+group = ""
+queueable = true
+allow_dupes = false
+
+[sub_resource type="Resource" id="Resource_8ylsh"]
+script = ExtResource("5_u0atp")
+time = 60.0
+destinations = Array[String](["intro_end"])
+loop = false
+
+[sub_resource type="Resource" id="Resource_j28re"]
+script = ExtResource("5_u0atp")
+time = 64.0
+destinations = Array[String](["intro_end"])
+loop = false
+
+[sub_resource type="Resource" id="Resource_1y0v0"]
+script = ExtResource("5_u0atp")
+time = 68.0
+destinations = Array[String](["intro_end"])
+loop = false
+
+[sub_resource type="Resource" id="Resource_uu6hi"]
+script = ExtResource("5_u0atp")
+time = 72.0
+destinations = Array[String](["intro_end"])
+loop = false
 
 [sub_resource type="Resource" id="Resource_vm4ss"]
 script = ExtResource("5_u0atp")
@@ -35,15 +90,15 @@ loop = true
 [resource]
 script = ExtResource("1_ngdp7")
 playlist_name = "intro"
-streams = Array[ExtResource("4_60lgf")]([SubResource("Resource_e5psg")])
+streams = Array[ExtResource("4_60lgf")]([SubResource("Resource_e5psg"), SubResource("Resource_n3vdr"), SubResource("Resource_4b0ny")])
 end_time = 0.0
 loop = false
 loop_offset = 0.0
 vertical_states = Array[Resource("res://addons/legadot/data_containers/LdVerticalStateData.gd")]([])
 fade_length = 0.0
 sections = Array[ExtResource("2_si6iq")]([SubResource("Resource_fymly"), SubResource("Resource_bt2xa")])
-transitions = Array[ExtResource("5_u0atp")]([SubResource("Resource_vm4ss")])
-bpm_times = Array[Resource("res://addons/legadot/data_containers/LdBpmData.gd")]([])
+transitions = Array[ExtResource("5_u0atp")]([SubResource("Resource_8ylsh"), SubResource("Resource_j28re"), SubResource("Resource_1y0v0"), SubResource("Resource_uu6hi"), SubResource("Resource_vm4ss")])
+bpm_times = Array[ExtResource("1_jugah")]([SubResource("Resource_vyc7j")])
 count_subdivision = 1
 events = Array[Resource("res://addons/legadot/data_containers/LdEventData.gd")]([])
 action_sets = Array[Resource("res://addons/legadot/data_containers/actions/LdActionSet.gd")]([])
