@@ -1,0 +1,52 @@
+[gd_resource type="Resource" script_class="LdPlaylistData" load_steps=10 format=3 uid="uid://ckc7xjpa5y2pq"]
+
+[ext_resource type="Script" path="res://addons/legadot/data_containers/LdPlaylistData.gd" id="1_ngdp7"]
+[ext_resource type="Script" path="res://addons/legadot/data_containers/LdSectionData.gd" id="2_si6iq"]
+[ext_resource type="AudioStream" uid="uid://dswqw4l31lkuq" path="res://intro.ogg" id="3_l3uv6"]
+[ext_resource type="Script" path="res://addons/legadot/data_containers/LdStreamData.gd" id="4_60lgf"]
+[ext_resource type="Script" path="res://addons/legadot/data_containers/LdTransitionData.gd" id="5_u0atp"]
+
+[sub_resource type="Resource" id="Resource_fymly"]
+script = ExtResource("2_si6iq")
+section_name = "intro_loop"
+time = 60.0
+
+[sub_resource type="Resource" id="Resource_bt2xa"]
+script = ExtResource("2_si6iq")
+section_name = "intro_end"
+time = 76.0
+
+[sub_resource type="Resource" id="Resource_e5psg"]
+script = ExtResource("4_60lgf")
+name = "intro_song"
+audio_stream = ExtResource("3_l3uv6")
+time = 0.0
+vol = 1.0
+group = ""
+queueable = false
+allow_dupes = false
+
+[sub_resource type="Resource" id="Resource_vm4ss"]
+script = ExtResource("5_u0atp")
+time = 76.0
+destinations = Array[String](["intro_end", "intro_loop"])
+loop = true
+
+[resource]
+script = ExtResource("1_ngdp7")
+playlist_name = "intro"
+streams = Array[ExtResource("4_60lgf")]([SubResource("Resource_e5psg")])
+end_time = 0.0
+loop = false
+loop_offset = 0.0
+vertical_states = Array[Resource("res://addons/legadot/data_containers/LdVerticalStateData.gd")]([])
+fade_length = 0.0
+sections = Array[ExtResource("2_si6iq")]([SubResource("Resource_fymly"), SubResource("Resource_bt2xa")])
+transitions = Array[ExtResource("5_u0atp")]([SubResource("Resource_vm4ss")])
+bpm_times = Array[Resource("res://addons/legadot/data_containers/LdBpmData.gd")]([])
+count_subdivision = 1
+events = Array[Resource("res://addons/legadot/data_containers/LdEventData.gd")]([])
+action_sets = Array[Resource("res://addons/legadot/data_containers/actions/LdActionSet.gd")]([])
+default_v_state = ""
+default_h_state = ""
+max_playlist_vol = 1.0

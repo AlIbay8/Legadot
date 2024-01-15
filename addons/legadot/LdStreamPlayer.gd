@@ -31,6 +31,8 @@ var current_beat_value: int = 4
 var total_measures: int = 0
 var coroutine_password: float = 0.0
 
+var p_tween: Tween
+
 var playlist_vol: float = 1.0
 
 @export var auto_start: bool = false
@@ -177,7 +179,8 @@ func build_groups():
 		if not (stream.group in self.groups):
 			self.groups[stream.group] = {
 				"streams": [],
-				"vol": 1.0
+				"vol": 1.0,
+				"g_tween": null
 			}
 		groups[stream.group].streams.append(stream)
 
@@ -311,35 +314,40 @@ func seek(to: float):
 func fade_stream(vol_linear: float, stream: String, fade_override: float = -1.0):
 	if stream in stream_data:
 		update_stream_mute(vol_linear, stream)
-		var stream_tween = create_tween()
-		stream_tween.set_parallel(true)
+		var song: LdStream = stream_data[stream]
+		if song.s_tween: song.s_tween.kill()
+		song.s_tween = create_tween()
+		song.s_tween.set_parallel(true)
 		if vol_linear>stream_data[stream].max_vol:
 			vol_linear = stream_data[stream].max_vol
-		stream_tween.tween_method(interpolate_vol.bind(stream_data[stream], 0), stream_data[stream].vol, vol_linear, playlist_data.fade_length if fade_override<0.0 else fade_override)
-		await stream_tween.finished
+		song.s_tween.tween_method(interpolate_vol.bind(stream_data[stream], 0), stream_data[stream].vol, vol_linear, playlist_data.fade_length if fade_override<0.0 else fade_override)
+		await song.s_tween.finished
 	return
 
 func fade_group(vol_linear: float, group: String, fade_override: float = -1.0):
 	if group in groups and group!="":
 		update_group_mute(vol_linear, group)
-		var group_tween = create_tween()
-		group_tween.set_parallel(true)
+		var group_data: Dictionary = groups[group]
+		if group_data.g_tween: group_data.g_tween.kill()
+		group_data.g_tween = create_tween()
+		group_data.g_tween.set_parallel(true)
 	
 		for stream in groups[group].streams:
 			#update_stream_mute(vol_linear, stream.name)
-			group_tween.tween_method(interpolate_vol.bind(stream, 1), groups[group].vol, vol_linear, playlist_data.fade_length if fade_override<0.0 else fade_override)
-		await group_tween.finished
+			group_data.g_tween.tween_method(interpolate_vol.bind(stream, 1), groups[group].vol, vol_linear, playlist_data.fade_length if fade_override<0.0 else fade_override)
+		await group_data.g_tween.finished
 	return
 
 func fade_playlist(vol_linear: float, stop_audio: bool = false, fade_override: float = -1.0):
 	if stream_data.is_empty(): return
 	update_playlist_mute(vol_linear)
-	var playlist_tween = create_tween()
-	playlist_tween.set_parallel(true)
+	if p_tween: p_tween.kill()
+	p_tween = create_tween()
+	p_tween.set_parallel(true)
 	
 	for stream in stream_data:
-		playlist_tween.tween_method(interpolate_vol.bind(stream_data[stream],2),playlist_vol,vol_linear,playlist_data.fade_length if fade_override<0.0 else fade_override)
-	await playlist_tween.finished
+		p_tween.tween_method(interpolate_vol.bind(stream_data[stream],2),playlist_vol,vol_linear,playlist_data.fade_length if fade_override<0.0 else fade_override)
+	await p_tween.finished
 	if stop_audio and playlist_vol<=0.0:
 		stop()
 	return

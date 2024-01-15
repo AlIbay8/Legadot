@@ -30,6 +30,7 @@ await_finish = false
 script = ExtResource("3_ohgmv")
 action_set_name = "set_stage2"
 actions = Array[Resource("res://addons/legadot/data_containers/actions/LdAction.gd")]([SubResource("Resource_f5a1u"), SubResource("Resource_pisai")])
+cancel_on_new_set = false
 
 [sub_resource type="Resource" id="Resource_lu3cj"]
 script = ExtResource("1_ta24g")

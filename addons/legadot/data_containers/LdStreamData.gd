@@ -12,6 +12,7 @@ class_name LdStream
 @export var allow_dupes: bool = false
 
 var player
+var s_tween: Tween
 var timer: Timer
 var max_vol: float
 var connected: float = -1.0
