@@ -409,8 +409,6 @@ func set_v_state(new_state: String, fade_override: float = -1.0):
 		for group in v_states[new_state].groups:
 			if group in groups:
 				fade_group(1.0, group, fade_override)
-			else:
-				fade_stream(1.0, group, fade_override)
 		await get_tree().create_timer(playlist_data.fade_length if fade_override<0.0 else fade_override).timeout
 	return
 
