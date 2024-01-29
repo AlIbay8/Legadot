@@ -37,7 +37,6 @@ layout_mode = 2
 
 [node name="DebugLabel" type="Label" parent="MarginContainer/VBoxContainer"]
 layout_mode = 2
-text = "tutorial, 27"
 label_settings = SubResource("LabelSettings_v5mwe")
 
 [node name="TimeLabel" type="Label" parent="MarginContainer/VBoxContainer"]
@@ -45,7 +44,7 @@ layout_mode = 2
 
 [node name="BeatLabel" type="Label" parent="MarginContainer/VBoxContainer"]
 layout_mode = 2
-text = "Measure, Beat, Time Signature: 7, 3, 4/4"
+text = "Measure, Beat, Time Signature:"
 
 [node name="SongControls" type="HBoxContainer" parent="MarginContainer/VBoxContainer"]
 layout_mode = 2
