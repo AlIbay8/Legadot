@@ -475,7 +475,7 @@ func get_beats_since_sect(time: float) -> float:
 			var beats_sec: float = (pow(x_t,2)/2)*db_dt + c_b*x_t
 			var beats: float = (beats_sec/(60.0/playlist_data.count_subdivision)) + playlist_data.count_subdivision
 			return beats
-	return 0
+	return 0.0
 
 func play_queueable(stream: String, wait_beat: float = 1.0):
 	if stream in stream_data and is_playing:
