@@ -431,6 +431,11 @@ func check_h_transition(transition: LdTransition) -> bool:
 			if dest in h_sections:
 				seek(h_sections[dest])
 				return true
+		elif h_state == dest.get_slice("=", 0):
+			var cnd_dest: String = dest.get_slice("=", 1)
+			if cnd_dest in h_sections:
+				seek(h_sections[cnd_dest])
+				return true
 	if transition.loop:
 		seek(h_sections[transition.destinations[-1]])
 		return true
