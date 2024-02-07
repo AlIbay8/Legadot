@@ -49,7 +49,7 @@ func _physics_process(_delta):
 func init_debug_menu():
 	if ld_player:
 		init_vertical(ld_player.v_states)
-		init_horizontal(ld_player.h_sections)
+		init_horizontal(ld_player.h_sections, ld_player.h_names)
 		init_stream_toggles(ld_player.stream_data)
 		init_group_toggles(ld_player.groups)
 		init_queueables(ld_player.stream_data)
@@ -61,8 +61,11 @@ func init_vertical(v_state_data: Dictionary):
 		vertical_states.append(v)
 		vertical_option.add_item(v)
 
-func init_horizontal(h_section_data: Dictionary):
+func init_horizontal(h_section_data: Dictionary, custom_names: Array):
 	horizontal_option.clear()
+	for h_name in custom_names:
+		horizontal_states.append(h_name)
+		horizontal_option.add_item(h_name) 
 	for h in h_section_data:
 		horizontal_states.append(h)
 		horizontal_option.add_item(h)

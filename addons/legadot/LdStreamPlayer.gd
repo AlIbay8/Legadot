@@ -11,6 +11,7 @@ var groups: Dictionary = {}
 var timeline: Dictionary = {}
 var v_states: Dictionary = {}
 var h_sections: Dictionary = {}
+var h_names: Array[String] = []
 var bpms: Dictionary = {}
 var bpm_times: Array
 var event_names: Array
@@ -202,6 +203,10 @@ func build_timeline():
 		if not (t.time in timeline):
 			timeline[t.time] = LdTimelineEvent.new(t.time)
 		timeline[t.time].transition = t
+		for d in t.destinations:
+			var h_name: String = d.get_slice("=",0)
+			if d.get_slice_count("=")>=2:
+				if not h_names.has(h_name): h_names.append(h_name)
 	
 	for sect in playlist_data.sections:
 		if not (sect.time in timeline):
@@ -433,6 +438,12 @@ func check_h_transition(transition: LdTransition, current_time: float) -> bool:
 				if current_time == h_sections[dest]: return false
 				seek(h_sections[dest])
 				return true
+		elif h_state == dest.get_slice("=", 0):
+			var c_dest: String = dest.get_slice("=", 1)
+			if c_dest in h_sections:
+				if current_time == h_sections[c_dest]: return false
+				seek(h_sections[c_dest])
+				return true
 	if transition.loop:
 		if current_time == h_sections[transition.destinations[-1]]: return false
 		seek(h_sections[transition.destinations[-1]])
@@ -441,6 +452,7 @@ func check_h_transition(transition: LdTransition, current_time: float) -> bool:
 
 func set_h_state(new_state: String, auto_play: bool = false):
 	h_state = new_state
+	print("new state:", new_state)
 	if debug_menu:
 		debug_menu.h_select(new_state)
 	if auto_play:
