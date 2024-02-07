@@ -425,18 +425,15 @@ func toggle_v_state(state: String, fade_override: float = -1.0):
 	return
 
 # Horizontal Remixing
-func check_h_transition(transition: LdTransition) -> bool:
+func check_h_transition(transition: LdTransition, current_time: float) -> bool:
 	for dest in transition.destinations:
 		if h_state == dest:
 			if dest in h_sections:
+				if current_time == h_sections[dest]: return false
 				seek(h_sections[dest])
 				return true
-		elif h_state == dest.get_slice("=", 0):
-			var cnd_dest: String = dest.get_slice("=", 1)
-			if cnd_dest in h_sections:
-				seek(h_sections[cnd_dest])
-				return true
 	if transition.loop:
+		if current_time == h_sections[transition.destinations[-1]]: return false
 		seek(h_sections[transition.destinations[-1]])
 		return true
 	return false
@@ -462,7 +459,7 @@ func get_bpm(time: float) -> float:
 			
 			var bpm: float = db_dt*x_t + c_b
 			return bpm
-	return 0
+	return 0.0
 
 # Interactive Audio
 func get_beats_since_sect(time: float) -> float:

@@ -16,7 +16,7 @@ func trigger_event(playlist: LdStreamPlayer, offset: float = -1.0, check_end: bo
 	if offset<0.0:
 		offset = 0.0
 		if transition:
-			var transitioned: bool = playlist.check_h_transition(transition)
+			var transitioned: bool = playlist.check_h_transition(transition, time)
 			if transitioned: return
 	
 	if event:
