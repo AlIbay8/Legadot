@@ -152,6 +152,7 @@ func add_stream(stream: LdStream):
 		check_longest_time(stream.time, stream.audio_stream)
 		
 		stream_players.add_child(player)
+		fade_stream(1.0,stream.name,0.0)
 
 func get_player_template():
 	var player_node: AudioStreamPlayer = AudioStreamPlayer.new()
