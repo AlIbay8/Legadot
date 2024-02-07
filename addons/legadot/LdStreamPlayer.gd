@@ -452,7 +452,6 @@ func check_h_transition(transition: LdTransition, current_time: float) -> bool:
 
 func set_h_state(new_state: String, auto_play: bool = false):
 	h_state = new_state
-	print("new state:", new_state)
 	if debug_menu:
 		debug_menu.h_select(new_state)
 	if auto_play:
