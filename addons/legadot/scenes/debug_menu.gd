@@ -6,7 +6,7 @@ class_name LdDebugMenu
 @onready var play_button: Button = $MarginContainer/VBoxContainer/SongControls/PlayButton as Button
 @onready var pause_button: Button = $MarginContainer/VBoxContainer/SongControls/PauseButton as Button
 @onready var stop_button: Button = $MarginContainer/VBoxContainer/SongControls/StopButton as Button
-@onready var song_progress: ProgressBar = $MarginContainer/VBoxContainer/SongControls/HBoxContainer/VBoxContainer/SongProgress as ProgressBar
+@onready var song_progress: HSlider = $MarginContainer/VBoxContainer/SongControls/HBoxContainer/VBoxContainer/SongProgress as HSlider
 @onready var vertical_option: OptionButton = $MarginContainer/VBoxContainer/VerticalHorizontalControlsContainter/VerticalOption as OptionButton
 @onready var horizontal_option: OptionButton = $MarginContainer/VBoxContainer/VerticalHorizontalControlsContainter/HorizontalOption as OptionButton
 @onready var streams_container: HBoxContainer = $MarginContainer/VBoxContainer/StreamControls/StreamsScrollContainer/StreamsContainer as HBoxContainer
