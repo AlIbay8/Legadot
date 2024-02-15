@@ -66,9 +66,9 @@ signal playlist_unmuted()
 
 @export_category("Debug")
 @export var show_debug_menu: bool = false
-@onready var debug_menu: LdDebugMenu = get_node_or_null("DebugMenu")
+@onready var debug_menu: LdDebugMenu = get_node_or_null("DebugMenu") as LdDebugMenu
 
-func _ready():
+func _ready() -> void:
 	if Legadot and playlist_data:
 		if playlist_data.playlist_name!="":
 			Legadot.add_playlist(playlist_data.playlist_name, self)
@@ -80,10 +80,10 @@ func _ready():
 	init_timers_node()
 	init_playlist()
 
-func init_debug():
+func init_debug() -> void:
 	if show_debug_menu:
 		if not debug_menu:
-			var debug_scene = load("res://addons/legadot/scenes/debug_menu.tscn")
+			var debug_scene: Resource = load("res://addons/legadot/scenes/debug_menu.tscn")
 			debug_menu = debug_scene.instantiate()
 			add_child(debug_menu)
 	else:
@@ -91,19 +91,19 @@ func init_debug():
 			debug_menu.queue_free()
 		debug_menu = null
 
-func init_stream_players_node():
+func init_stream_players_node() -> void:
 	var stream_players_node: Node = Node.new()
 	stream_players_node.name = "StreamPlayers"
 	self.add_child(stream_players_node)
 	self.stream_players = stream_players_node
 
-func init_timers_node():
+func init_timers_node() -> void:
 	var timers_node: Node = Node.new()
 	timers_node.name = "Timers"
 	self.add_child(timers_node)
 	self.timers = timers_node
 
-func init_playlist():
+func init_playlist() -> void:
 	if playlist_data:
 		build_data()
 		build_groups()
@@ -138,11 +138,11 @@ func init_playlist():
 			else:
 				stop()
 
-func build_data():
+func build_data() -> void:
 	for stream in playlist_data.streams:
 		add_stream(stream)
 
-func add_stream(stream: LdStream):
+func add_stream(stream: LdStream) -> void:
 	var player_template = get_player_template()
 	if stream.name != "":
 		var player = player_template.duplicate()
@@ -156,7 +156,7 @@ func add_stream(stream: LdStream):
 		stream_players.add_child(player)
 		fade_stream(1.0,stream.name,0.0)
 
-func get_player_template():
+func get_player_template() -> Node:
 	var player_node: AudioStreamPlayer = AudioStreamPlayer.new()
 	for child in self.get_children():
 		if child is AudioStreamPlayer:
@@ -165,7 +165,7 @@ func get_player_template():
 			break
 	return player_node
 
-func check_longest_time(time: float, stream: AudioStream):
+func check_longest_time(time: float, stream: AudioStream) -> void:
 	var stream_length: float = 0.0
 	if stream is AudioStreamRandomizer:
 		for i in range(stream.streams_count):
@@ -176,7 +176,7 @@ func check_longest_time(time: float, stream: AudioStream):
 	if time+stream_length>longest_time:
 		longest_time = time+stream_length
 	
-func build_groups():
+func build_groups() -> void:
 	for s in stream_data:
 		var stream = stream_data[s]
 		if not (stream.group in self.groups):
@@ -187,7 +187,7 @@ func build_groups():
 			}
 		groups[stream.group].streams.append(stream)
 
-func build_timeline():
+func build_timeline() -> void:
 	for s in stream_data:
 		if stream_data[s].queueable: continue
 		var s_time = stream_data[s].time
@@ -237,7 +237,7 @@ func build_timeline():
 	if debug_menu:
 		debug_menu.song_progress.max_value = end
 
-func assign_timers():
+func assign_timers() -> void:
 	for e in timeline:
 		var timer: Timer = Timer.new()
 		timer.autostart=false
@@ -246,15 +246,15 @@ func assign_timers():
 		timer.timeout.connect(timeline[e].trigger_event.bind(self))
 		timers.add_child(timer)
 
-func build_v_states():
+func build_v_states() -> void:
 	for v in playlist_data.vertical_states:
 		v_states[v.state_name] = v
 
-func build_h_sections():
+func build_h_sections() -> void:
 	for h in playlist_data.sections:
 		h_sections[h.section_name] = h.time
 
-func build_bpm():
+func build_bpm() -> void:
 	for bpm in playlist_data.bpm_times:
 		bpms[bpm.time] = bpm
 		if !bpm_times.has(bpm.time):
@@ -262,12 +262,12 @@ func build_bpm():
 	bpm_times.sort()
 	bpm_times.reverse()
 	
-func build_action_sets():
+func build_action_sets() -> void:
 	for action_set in playlist_data.action_sets:
 		action_sets[action_set.action_set_name] = action_set
 
 # Basic song functions
-func play(from: float = 0.0):
+func play(from: float = 0.0) -> void:
 	if not playlist_data: return
 	if is_playing:
 		stop(true)
@@ -291,12 +291,12 @@ func play(from: float = 0.0):
 		elif (from-time)>=0.0:
 			timeline[time].trigger_event(self, abs(from-time), false)
 
-func play_from_sect(sect: String):
+func play_from_sect(sect: String) -> void:
 	if sect in h_sections:
 		if not Engine.is_editor_hint():
 			play(h_sections[sect])
 
-func stop(seek_stop: bool = false, reset_pos: bool = true):
+func stop(seek_stop: bool = false, reset_pos: bool = true) -> void:
 	if reset_pos: 
 		sec_position = 0
 		last_reported_beat = 0
@@ -309,17 +309,17 @@ func stop(seek_stop: bool = false, reset_pos: bool = true):
 		if stream.player.playing:
 			stream.player.playing = false
 
-func pause():
+func pause() -> void:
 	stop(false, false)
 
-func resume():
+func resume() -> void:
 	play(sec_position)
 
-func seek(to: float):
+func seek(to: float) -> void:
 	play(to)
 
 # Fade functions
-func fade_stream(vol_linear: float, stream: String, fade_override: float = -1.0):
+func fade_stream(vol_linear: float, stream: String, fade_override: float = -1.0) -> void:
 	if stream in stream_data:
 		update_stream_mute(vol_linear, stream)
 		var song: LdStream = stream_data[stream]
@@ -332,7 +332,7 @@ func fade_stream(vol_linear: float, stream: String, fade_override: float = -1.0)
 		await song.s_tween.finished
 	return
 
-func fade_group(vol_linear: float, group: String, fade_override: float = -1.0):
+func fade_group(vol_linear: float, group: String, fade_override: float = -1.0) -> void:
 	if group in groups and group!="":
 		update_group_mute(vol_linear, group)
 		var group_data: Dictionary = groups[group]
@@ -346,7 +346,7 @@ func fade_group(vol_linear: float, group: String, fade_override: float = -1.0):
 		await group_data.g_tween.finished
 	return
 
-func fade_playlist(vol_linear: float, stop_audio: bool = false, fade_override: float = -1.0):
+func fade_playlist(vol_linear: float, stop_audio: bool = false, fade_override: float = -1.0) -> void:
 	if stream_data.is_empty(): return
 	update_playlist_mute(vol_linear)
 	if p_tween: p_tween.kill()
@@ -360,7 +360,7 @@ func fade_playlist(vol_linear: float, stop_audio: bool = false, fade_override: f
 		stop()
 	return
 
-func interpolate_vol(vol_linear: float, stream: LdStream, type: int):
+func interpolate_vol(vol_linear: float, stream: LdStream, type: int) -> void:
 	match type:
 		0:
 			stream.vol = vol_linear
@@ -371,7 +371,7 @@ func interpolate_vol(vol_linear: float, stream: LdStream, type: int):
 	var new_vol: float = stream.vol*groups[stream.group].vol*playlist_vol*playlist_data.max_playlist_vol
 	stream.player.volume_db = linear_to_db(new_vol)
 
-func update_stream_mute(vol_linear: float, stream_name: String):
+func update_stream_mute(vol_linear: float, stream_name: String) -> void:
 	if vol_linear==0.0:
 		unmuted_streams.erase(stream_name)
 		self.stream_muted.emit(stream_name)
@@ -383,7 +383,7 @@ func update_stream_mute(vol_linear: float, stream_name: String):
 		if debug_menu and stream_name in debug_menu.stream_toggles:
 			debug_menu.stream_toggles[stream_name].set_pressed_no_signal(true)
 		
-func update_group_mute(vol_linear: float, group_name: String):
+func update_group_mute(vol_linear: float, group_name: String) -> void:
 	if vol_linear==0.0:
 		unmuted_groups.erase(group_name)
 		self.group_muted.emit(group_name)
@@ -395,7 +395,7 @@ func update_group_mute(vol_linear: float, group_name: String):
 		if debug_menu and group_name in debug_menu.group_toggles:
 			debug_menu.group_toggles[group_name].set_pressed_no_signal(true)
 
-func update_playlist_mute(vol_linear: float):
+func update_playlist_mute(vol_linear: float) -> void:
 	if vol_linear==0.0:
 		if unmuted_playlist:
 			unmuted_playlist = false
@@ -406,7 +406,7 @@ func update_playlist_mute(vol_linear: float):
 			self.playlist_unmuted.emit()
 
 # Vertical Remixing
-func set_v_state(new_state: String, fade_override: float = -1.0):
+func set_v_state(new_state: String, fade_override: float = -1.0) -> void:
 	if new_state in v_states:
 		v_state = new_state
 		if debug_menu:
@@ -421,7 +421,7 @@ func set_v_state(new_state: String, fade_override: float = -1.0):
 	return
 
 # may or may not keep this in
-func toggle_v_state(state: String, fade_override: float = -1.0):
+func toggle_v_state(state: String, fade_override: float = -1.0) -> void:
 	if state in v_states:
 		if not v_states[state].add_only:
 			for group in groups:
@@ -455,7 +455,7 @@ func check_h_transition(transition: LdTransition, current_time: float) -> bool:
 		return true
 	return false
 
-func set_h_state(new_state: String, auto_play: bool = false):
+func set_h_state(new_state: String, auto_play: bool = false) -> bool:
 	h_state = new_state
 	if debug_menu:
 		debug_menu.h_select(new_state)
@@ -499,7 +499,7 @@ func get_beats_since_sect(time: float) -> float:
 			return beats
 	return 0.0
 
-func play_queueable(stream: String, wait_beat: float = 1.0):
+func play_queueable(stream: String, wait_beat: float = 1.0) -> void:
 	if stream in stream_data and is_playing:
 		var queueable = stream_data[stream]
 		
@@ -521,7 +521,7 @@ func play_queueable(stream: String, wait_beat: float = 1.0):
 		queueable.play(0+AudioServer.get_time_to_next_mix())
 		queueable.connected = -1.0
 	
-func _physics_process(delta):
+func _physics_process(delta) -> void:
 	if is_playing:
 		if tracker_timer and !tracker_timer.is_stopped():
 			sec_position = start_position+tracker_timer.wait_time - tracker_timer.time_left
@@ -532,7 +532,7 @@ func _physics_process(delta):
 		beat_position = floor(get_beats_since_sect(sec_position))/playlist_data.count_subdivision
 		report_beat()
 
-func report_beat():
+func report_beat() -> void:
 	if last_reported_beat!=beat_position:
 		if debug_menu:
 			debug_menu.set_debug_label(current_section, beat_position)
@@ -549,7 +549,7 @@ func report_beat():
 			debug_menu.set_beat_label(total_measures, fmod(beat_position-1,current_beats_in_measure)+1, current_beats_in_measure, current_beat_value)
 		last_reported_beat = beat_position
 
-func wait_for_beat(beat: float = 1.0):
+func wait_for_beat(beat: float = 1.0) -> void:
 	match beat:
 		1.0: 
 			await self.quarter_beat
@@ -595,17 +595,17 @@ func wait_for_transition(h_state_name: String) -> bool:
 		else:
 			return false
 
-func check_end(time_check: float):
+func check_end(time_check: float) -> void:
 	if time_check==playlist_data.end_time:
 		stop()
 		self.playlist_finished.emit()
 		if playlist_data.loop:
 			play(playlist_data.loop_offset)
 
-func start_action_set(action_set_name: String):
+func start_action_set(action_set_name: String) -> void:
 	action_sets[action_set_name].trigger_actions(self)
 
-func remove_self():
+func remove_self() -> void:
 	if Legadot:
 		if playlist_data and playlist_data.playlist_name:
 			Legadot.remove_playlist(playlist_data.playlist_name)
