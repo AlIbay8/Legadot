@@ -113,10 +113,14 @@ func init_actions(action_set_data):
 func v_select(v_state: String):
 	if v_state in vertical_states:
 		vertical_option.select(vertical_states.find(v_state))
+	else:
+		vertical_option.select(-1)
 
 func h_select(h_state: String):
 	if h_state in horizontal_states:
 		horizontal_option.select(horizontal_states.find(h_state))
+	else:
+		horizontal_option.select(-1)
 
 func update_time():
 	if time_label:

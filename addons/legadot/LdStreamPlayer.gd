@@ -52,6 +52,7 @@ signal measure(beat_pos: float)
 signal quarter_beat(beat_pos: float)
 signal eighth_beat(beat_pos: float)
 signal section(sect: String)
+signal h_transitioned(state: String)
 signal event_reached(event: String)
 signal playlist_finished()
 
@@ -438,16 +439,19 @@ func check_h_transition(transition: LdTransition, current_time: float) -> bool:
 			if dest in h_sections:
 				if current_time == h_sections[dest]: return false
 				seek(h_sections[dest])
+				h_transitioned.emit(h_state)
 				return true
 		elif h_state == dest.get_slice("=", 0):
 			var c_dest: String = dest.get_slice("=", 1)
 			if c_dest in h_sections:
 				if current_time == h_sections[c_dest]: return false
 				seek(h_sections[c_dest])
+				h_transitioned.emit(h_state)
 				return true
 	if transition.loop:
 		if current_time == h_sections[transition.destinations[-1]]: return false
 		seek(h_sections[transition.destinations[-1]])
+		h_transitioned.emit(h_state)
 		return true
 	return false
 
@@ -457,6 +461,9 @@ func set_h_state(new_state: String, auto_play: bool = false):
 		debug_menu.h_select(new_state)
 	if auto_play:
 		play_from_sect(h_state)
+		return true
+	
+	return await wait_for_transition(new_state)
 
 func get_bpm(time: float) -> float:
 	for i in range(bpm_times.size()):
@@ -562,6 +569,7 @@ func wait_for_section(sections: String, fire_in_middle: bool = false) -> bool:
 		if sect_array.has(reached_section):
 			return true
 		else:
+			if sections=="*": return true
 			return await wait_for_section(sections)
 	else:
 		return false
@@ -576,6 +584,16 @@ func wait_for_event(events: String) -> bool:
 			return await wait_for_event(events)
 	else:
 		return false
+
+func wait_for_transition(h_state_name: String) -> bool:
+	var h_success: String = await h_transitioned
+	if h_success==h_state_name:
+		return true
+	else:
+		if h_state_name==h_state:
+			return await wait_for_transition(h_state_name)
+		else:
+			return false
 
 func check_end(time_check: float):
 	if time_check==playlist_data.end_time:
