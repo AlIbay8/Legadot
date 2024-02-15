@@ -93,6 +93,7 @@ text = "H State:"
 
 [node name="HorizontalOption" type="OptionButton" parent="MarginContainer/VBoxContainer/VerticalHorizontalControlsContainter"]
 layout_mode = 2
+allow_reselect = true
 
 [node name="StreamControls" type="HBoxContainer" parent="MarginContainer/VBoxContainer"]
 layout_mode = 2

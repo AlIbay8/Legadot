@@ -60,15 +60,17 @@ func init_vertical(v_state_data: Dictionary):
 	for v in v_state_data:
 		vertical_states.append(v)
 		vertical_option.add_item(v)
+	vertical_option.select(-1)
 
 func init_horizontal(h_section_data: Dictionary, custom_names: Array):
 	horizontal_option.clear()
 	for h_name in custom_names:
 		horizontal_states.append(h_name)
-		horizontal_option.add_item(h_name) 
+		horizontal_option.add_item(h_name)
 	for h in h_section_data:
 		horizontal_states.append(h)
 		horizontal_option.add_item(h)
+	horizontal_option.select(-1)
 
 func init_stream_toggles(stream_data: Dictionary):
 	for stream in stream_data:

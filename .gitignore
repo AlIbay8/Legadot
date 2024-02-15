@@ -1,2 +1,19 @@
 # Godot 4+ specific ignores
 .godot/
+addons/legadot/example/demo_music/queueables/b.wav.import
+addons/legadot/example/demo_music/queueables/c.wav
+addons/legadot/example/demo_music/queueables/c.wav.import
+addons/legadot/example/demo_music/queueables/collect_sfx.wav
+addons/legadot/example/demo_music/queueables/collect_sfx.wav.import
+addons/legadot/example/demo_music/queueables/d.wav
+addons/legadot/example/demo_music/queueables/d.wav.import
+addons/legadot/example/demo_music/queueables/e.wav
+addons/legadot/example/demo_music/queueables/e.wav.import
+addons/legadot/example/demo_music/queueables/f.wav
+addons/legadot/example/demo_music/queueables/f.wav.import
+addons/legadot/example/demo_music/queueables/g.wav
+addons/legadot/example/demo_music/queueables/g.wav.import
+addons/legadot/example/demo_music/queueables/grav_sfx.wav
+addons/legadot/example/demo_music/queueables/grav_sfx.wav.import
+addons/legadot/example/demo_music/queueables/win_sfx.wav
+addons/legadot/example/demo_music/queueables/win_sfx.wav.import
