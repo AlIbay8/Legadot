@@ -267,6 +267,7 @@ func build_action_sets():
 
 # Basic song functions
 func play(from: float = 0.0):
+	if not playlist_data: return
 	if is_playing:
 		stop(true)
 	if from>=playlist_data.end_time:
