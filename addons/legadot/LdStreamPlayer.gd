@@ -280,7 +280,7 @@ func play(from: float = 0.0) -> void:
 	time_keys.sort()
 	for time in time_keys:
 		if time>from:
-			timeline[time].timer.wait_time = time-from-AudioServer.get_time_to_next_mix()
+			timeline[time].timer.wait_time = time-from+AudioServer.get_time_to_next_mix()
 			if timeline[time].timer.wait_time>=0.05:
 				if not tracker_timer or timeline[time].timer.wait_time>tracker_timer.wait_time:
 					tracker_timer = timeline[time].timer
