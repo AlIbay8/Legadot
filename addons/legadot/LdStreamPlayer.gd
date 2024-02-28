@@ -41,7 +41,7 @@ var playlist_vol: float = 1.0
 @export var v_state: String
 @export var h_state: String
 
-var tracker_timer: Timer
+var tracker_stream: LdStream
 var longest_time: float = 0.0
 
 var unmuted_streams: Array[String]
@@ -131,6 +131,8 @@ func init_playlist() -> void:
 				debug_menu.h_select(h_state)
 			await get_tree().create_timer(0.25).timeout
 			set_h_state(playlist_data.default_h_state, auto_start)
+			if not (playlist_data.default_h_state in h_sections) and auto_start:
+				play(0.0)
 		else:
 			if not Engine.is_editor_hint():
 				if auto_start and OS.get_name()!="Web":
@@ -282,8 +284,6 @@ func play(from: float = 0.0) -> void:
 		if time>from:
 			timeline[time].timer.wait_time = time-from+AudioServer.get_time_to_next_mix()
 			if timeline[time].timer.wait_time>=0.05:
-				if not tracker_timer or timeline[time].timer.wait_time>tracker_timer.wait_time:
-					tracker_timer = timeline[time].timer
 				timeline[time].timer.start()
 			else:
 				timeline[time].trigger_event(self, abs(from-time), false)
@@ -521,13 +521,16 @@ func play_queueable(stream: String, wait_beat: float = 1.0) -> void:
 		queueable.play(0+AudioServer.get_time_to_next_mix())
 		queueable.connected = -1.0
 	
+func set_tracker_stream(new_stream: LdStream) -> void:
+	if new_stream!=tracker_stream:
+		tracker_stream = new_stream
+	
 func _physics_process(delta) -> void:
 	if is_playing:
-		if tracker_timer and !tracker_timer.is_stopped():
-			sec_position = start_position+tracker_timer.wait_time - tracker_timer.time_left
+		if tracker_stream and tracker_stream.player.playing:
+			sec_position = tracker_stream.time + tracker_stream.player.get_playback_position() + AudioServer.get_time_since_last_mix() - AudioServer.get_output_latency()
 		else:
 			sec_position+=delta
-		
 		raw_beat_position = get_beats_since_sect(sec_position)/playlist_data.count_subdivision
 		beat_position = floor(get_beats_since_sect(sec_position))/playlist_data.count_subdivision
 		report_beat()
@@ -603,7 +606,8 @@ func check_end(time_check: float) -> void:
 			play(playlist_data.loop_offset)
 
 func start_action_set(action_set_name: String) -> void:
-	action_sets[action_set_name].trigger_actions(self)
+	if action_set_name in action_sets:
+		action_sets[action_set_name].trigger_actions(self)
 
 func remove_self() -> void:
 	if Legadot:

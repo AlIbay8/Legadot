@@ -18,7 +18,8 @@ func trigger_event(playlist: LdStreamPlayer, offset: float = -1.0, check_end: bo
 		if transition:
 			var transitioned: bool = playlist.check_h_transition(transition, time)
 			if transitioned: return
-	
+	if streams.size()>0:
+		playlist.set_tracker_stream(get_longest_stream())
 	if event:
 		playlist.event_reached.emit(event.event_name)
 		if event.has_method("custom_event"):
@@ -35,3 +36,15 @@ func trigger_event(playlist: LdStreamPlayer, offset: float = -1.0, check_end: bo
 	
 	if check_end:
 		playlist.check_end(time)
+
+func get_longest_stream() -> LdStream:
+	var long_stream: LdStream
+	var stream_len: float = 0.0
+	for s in streams:
+		if s is LdStream:
+			if not s.queueable:
+				var len: float = s.audio_stream.get_length()
+				if len>stream_len and s.player:
+					stream_len=len
+					long_stream=s
+	return long_stream if long_stream else null
