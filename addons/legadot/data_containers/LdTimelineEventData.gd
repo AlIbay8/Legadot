@@ -20,7 +20,7 @@ func trigger_event(playlist: LdStreamPlayer, offset: float = -1.0, check_end: bo
 			if transitioned: return
 	if streams.size()>0:
 		playlist.set_tracker_stream(get_longest_stream())
-	if event:
+	if event and offset<=0.0:
 		playlist.event_reached.emit(event.event_name)
 		if event.has_method("custom_event"):
 			event.custom_event(playlist)
